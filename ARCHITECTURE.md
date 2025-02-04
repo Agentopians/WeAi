@@ -4,40 +4,49 @@ This diagram illustrates the architecture of the Week in Ethereum News AI Editio
 
 ```mermaid
 graph TD
-    A[Content Curation Agent] --> B[Content Summarization Agent]
-    B --> C[Newsletter Assembly Agent]
+    A[Content Curation Agent] --> B[Category Classification Agent]
+    B --> C[Content Summarization Agent]
+    C --> D[Newsletter Assembly Agent]
     
-    D[Job Posting Agent] --> E[Payment Processing Agent]
-    E --> F[Moderation Agent]
-    F --> C
+    E[Job Posting Agent] --> F[Payment Processing Agent]
+    F --> G[Moderation Agent]
+    G --> D
     
-    C --> G[Distribution Agent]
+    H[Stats Collection Agent] --> D
+    I[Event Tracking Agent] --> D
     
-    H[Feedback & Quality Agent] --> A
-    H --> B
-    H --> F
+    D --> J[Distribution Agent]
     
-    I[Editorial Policy Agent] --> A
-    I --> B
-    I --> F
+    K[Quality Control Agent] --> A
+    K --> C
+    K --> G
     
-    style C fill:#f9f,stroke:#333,stroke-width:2px
-    style I fill:#f0f,stroke:#333,stroke-width:2px
+    L[Editorial Policy Agent] --> A
+    L --> C
+    L --> G
+    
+    style D fill:#f9f,stroke:#333,stroke-width:2px
+    style L fill:#f0f,stroke:#333,stroke-width:2px
 ```
 
 ## Agent Descriptions
 
 ### Content Pipeline Agents
-- **Content Curation Agent**: Monitors and collects Ethereum news from trusted sources, social media, and community platforms. Uses AI to evaluate source credibility and content relevance.
-- **Content Summarization Agent**: Processes collected news items, generates concise summaries while maintaining accuracy and context. Implements style matching to maintain Week in Ethereum News' tone.
-- **Newsletter Assembly Agent**: Combines summaries and job postings into a cohesive newsletter format. Ensures consistent structure and readability.
+- **Content Curation Agent**: Monitors and collects Ethereum news from trusted sources, validates links, and evaluates source credibility.
+- **Category Classification Agent**: Classifies content into newsletter sections (Layer 1, Security, EIPs, etc.).
+- **Content Summarization Agent**: Generates technically accurate summaries maintaining Week in Ethereum News style.
+- **Newsletter Assembly Agent**: Structures content into consistent newsletter format with all required sections.
+
+### Data Collection Agents
+- **Stats Collection Agent**: Aggregates onchain metrics, gas fees, prices, and key ratios.
+- **Event Tracking Agent**: Maintains database of upcoming events, conferences, and protocol upgrades.
 
 ### Job Posting Pipeline Agents
-- **Job Posting Agent**: Handles submission of job postings from sponsors. Provides structured input forms and validation.
-- **Payment Processing Agent**: Manages payment simulation/processing for job postings. Implements secure transaction handling.
-- **Moderation Agent**: Ensures job postings meet quality standards and relevance criteria. Uses AI to detect spam and assess posting quality.
+- **Job Posting Agent**: Manages job submissions with 75-char limit validation and 4-issue tracking.
+- **Payment Processing Agent**: Handles $600/4-issue payments and renewal notifications.
+- **Moderation Agent**: Ensures job postings meet guidelines and maintains listing quality.
 
 ### Quality Control Agents
-- **Distribution Agent**: Handles newsletter delivery and distribution channels. Manages subscriber lists and delivery metrics.
-- **Feedback & Quality Agent**: Monitors performance metrics, user feedback, and content quality. Provides insights for continuous improvement.
-- **Editorial Policy Agent**: Maintains editorial standards and consistency with Week in Ethereum News' legacy. Guides content selection and presentation.
+- **Distribution Agent**: Manages newsletter delivery and distribution channels.
+- **Quality Control Agent**: Verifies technical accuracy, link validity, and style consistency.
+- **Editorial Policy Agent**: Maintains editorial standards and section-specific guidelines.

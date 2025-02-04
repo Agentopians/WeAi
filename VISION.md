@@ -19,9 +19,10 @@ An AI-powered system that continues the legacy of Week in Ethereum News through:
 
 ## Value Proposition
 - Timely, comprehensive weekly summaries of Ethereum ecosystem developments
-- High-quality, AI-curated content maintaining editorial standards
-- Efficient platform for employers to reach Ethereum talent
+- High-quality, AI-curated content maintaining Week in Ethereum News' editorial standards
+- Efficient platform for employers to reach qualified Ethereum talent
 - Time-saving resource for staying informed about Ethereum
+- Commitment to maintaining the trusted reputation of Week in Ethereum News
 
 ## Hackathon Goals
 1. Develop functional AI agent system for news curation and summarization

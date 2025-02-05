@@ -29,3 +29,4 @@
 
 - Enhanced personalization for newsletter content.
 - Expanded job posting categories and features.
+- Substack Integration and Email List: Implement Substack page and email list distribution to mirror the original "Week in Ethereum News" delivery method.

@@ -32,7 +32,7 @@ graph TD
 ## Agent Descriptions
 
 ### Content Pipeline Agents
-- **Content Curation Agent**: **Report Submission & Draft Generation**: Monitors and collects Ethereum news from trusted sources, validates links, and evaluates source credibility.  Compiles an initial draft of news items, ensuring privacy and protecting original sources. Audio content is transcribed, and data is analyzed as needed.
+- **Content Curation Agent**: **Report Submission & Draft Generation**: Monitors and collects Ethereum news from trusted and potentially verifiable sources, validates links, and evaluates source credibility.  Compiles an initial draft of news items, ensuring privacy and protecting original sources. Audio content is transcribed, and data is analyzed as needed.
 - **Category Classification Agent**: Classifies content into newsletter sections (Layer 1, Security, EIPs, etc.).
 - **Content Summarization Agent**: Generates technically accurate summaries maintaining Week in Ethereum News style, contributing to the draft generation.
 - **Newsletter Assembly Agent**: Structures content into consistent newsletter format with all required sections.
@@ -44,7 +44,7 @@ graph TD
 ### Job Posting Pipeline Agents
 - **Job Posting Agent**: Manages job submissions with 75-char limit validation and 4-issue tracking.
 - **Payment Processing Agent**: Handles job posting payments in ETH or stablecoins and manages renewal notifications. A portion of the revenue from job postings may be used to support the $EDIT token ecosystem (e.g., buying $EDIT for rewards distribution).
-- **Verification and Moderation Agent**: **Verification Process & Moderation**: Communicates with verifiers (potentially human editors or specialized AI agents) to gather feedback on content drafts, including approvals, rejections, or required modifications. Ensures job postings meet guidelines and maintains listing quality. This agent performs both content verification and job posting moderation.  Verifiers may be rewarded with $EDIT for their contributions.
+- **Verification and Moderation Agent**: **Verification Process & Moderation**: Employs verifiable methods to communicate with verifiers (potentially human editors or specialized AI agents) to gather feedback on content drafts, including approvals, rejections, or required modifications. Ensures job postings meet guidelines and maintains listing quality. This agent performs both content verification and job posting moderation.  Verifiers may be rewarded with $EDIT for their contributions.
 
 ### Quality Control Agents
 - **Distribution Agent**: **Publication**: Manages newsletter delivery and distribution channels, publishing finalized content as a newsletter.
@@ -66,3 +66,7 @@ This workflow ensures a structured approach to content creation, incorporating v
 ## Tokenomics
 
 The "Week in Ethereum News AI Edition" project incorporates a two-token model ($EDIT and ETH) to incentivize participation, ensure economic security, and foster community governance.  See the [FEATURES.md](FEATURES.md) document for a detailed description of the tokenomics model.  The Payment Processing Agent plays a key role in managing revenue from job postings and potentially using a portion of it to support the $EDIT ecosystem.  Rewards in $EDIT are distributed to contributors through the Verification and Moderation Agent and Editorial Policy Agent for their roles in content creation and verification.
+
+## Verifiability Considerations and Future Directions
+
+The "Week in Ethereum News AI Edition" project is committed to building a trustworthy and transparent news platform.  Inspired by the 'Level 1 Agent' concept and EigenLayer's Autonomous Verifiable Services (AVSs) architecture, we are exploring ways to enhance the verifiability of our AI agents.  While our current agents operate off-chain for practical reasons, we are designing our system with verifiability in mind.  Future directions include investigating verifiable data sources, exploring policy AVS concepts for editorial guidelines enforcement, and considering the potential integration of verifiable offchain inference technologies like EigenLayer AVSs in the long term.  This commitment to verifiability aims to provide users with cryptographic assurance of the integrity and unbiased nature of our news curation process.

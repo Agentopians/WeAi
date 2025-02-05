@@ -20,6 +20,7 @@
 
 - AI moderation to ensure content quality and relevance.
 - Editorial guidelines to maintain high standards.
+- **Verifiable Quality Control (Future)**:  Exploring verifiable methods for quality control, potentially leveraging policy AVS concepts to enforce editorial guidelines and ensure unbiased news curation.
 
 ## Feedback and Improvement
 
@@ -37,6 +38,10 @@
 - **Governance**: Holding $EDIT grants governance rights, potentially using quadratic or reputation-weighted voting for fair decision-making.
 - **Reputation**: Non-transferable reputation scores (SBTs) may be implemented to influence voting power and rewards based on contribution quality and history.
 - **Value Growth**: The value of $EDIT is intended to grow with the adoption, credibility, and overall success of the "Week in Ethereum News AI Edition" platform.
+
+## Verifiable AI Processes (Future)
+
+In the future, we aim to enhance the verifiability of our AI agents and news curation processes, drawing inspiration from 'Level 1 Agent' principles and exploring technologies like Autonomous Verifiable Services (AVSs). This will increase transparency and user trust in the platform.
 
 ## Future Features
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the technical design and architecture of the Week in Ethereum News AI Edition project. It provides details on the system components, data flow, and integration points. The system follows an **AI-Agentic Journalism Workflow** for content creation, which includes stages for report submission, draft generation, verification, editorial review, and publication.  More details on this workflow can be found in the [ARCHITECTURE.md](ARCHITECTURE.md) document.  The project also implements a **Two-Token Model** ($EDIT and ETH) to incentivize participation and ensure economic sustainability, as described in [FEATURES.md](FEATURES.md).
+This document outlines the technical design and architecture of the Week in Ethereum News AI Edition project. It provides details on the system components, data flow, and integration points. The system follows an **AI-Agentic Journalism Workflow** for content creation, which includes stages for report submission, draft generation, verification, editorial review, and publication.  More details on this workflow can be found in the [ARCHITECTURE.md](ARCHITECTURE.md) document.  The project also implements a **Two-Token Model** ($EDIT and ETH) to incentivize participation and ensure economic sustainability, as described in [FEATURES.md](FEATURES.md). The project is designed with principles of verifiability in mind, drawing inspiration from 'Level 1 Agent' concepts and exploring potential future integration with verifiable computing technologies like Autonomous Verifiable Services (AVSs).
 
 ## System Components
 
@@ -22,6 +22,7 @@ This document outlines the technical design and architecture of the Week in Ethe
 6. **$EDIT Token Distribution**: Rewards in $EDIT are distributed to contributors based on their roles and contributions, managed by smart contracts.
 7. **Governance Interactions**: $EDIT holders can participate in governance processes through the web interface, interacting with governance smart contracts.
 8. **$EDIT - ETH Swapping & Restaking**: Mechanisms for swapping $EDIT to ETH and restaking ETH will be implemented, potentially through smart contracts and integrated into the web interface.
+9. **Verifiability Checks (Future)**:  In future iterations, verifiable checks and potentially AVS verification steps may be integrated into the data flow to enhance transparency and trust.
 
 ## Integration Points
 
@@ -37,9 +38,11 @@ This document outlines the technical design and architecture of the Week in Ethe
 - **Access Control**: Role-based access control is implemented for all system components.
 - **Smart Contract Security**: Smart contracts will be rigorously audited to prevent vulnerabilities.
 - **Token Security**: Secure mechanisms for token minting, burning, and distribution will be implemented.
+- **Verifiability and Transparency Considerations**:  Beyond data and system security, the project prioritizes the verifiability and transparency of its AI-driven processes to build user trust and ensure the integrity of the news curation.
 
 ## Future Enhancements
 
 - **Machine Learning**: Implement advanced ML models for better content summarization.
 - **Scalability**: Optimize the system for handling increased data volume and user load.
 - **Advanced Tokenomics Features**: Explore and implement more sophisticated tokenomic mechanisms, such as dynamic reward adjustments, refined burning mechanisms, and advanced governance models.
+- **Exploration of Verifiable Computing**: Investigate and potentially integrate verifiable computing technologies and Autonomous Verifiable Services (AVSs) to enhance the transparency and trustworthiness of AI agents.

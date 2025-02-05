@@ -6,7 +6,7 @@ To build a sustainable, community-driven, and economically robust platform that 
 
 ## Value Proposition
 
-- **For the Ethereum Community**: Provides a reliable and comprehensive source of weekly Ethereum news, curated and summarized using AI, ensuring no important developments are missed.
+- **For the Ethereum Community**: Provides a verifiable and reliable source of weekly Ethereum news, curated and summarized using AI, ensuring no important developments are missed.
 - **For Content Contributors (Reporters, Verifiers)**: Offers a platform to contribute to the Ethereum ecosystem and earn rewards in $EDIT tokens for their valuable work, fostering a decentralized and collaborative content creation process.
 - **For Job Posters (Companies)**: Provides an effective channel to reach the Ethereum community with job postings, supporting talent acquisition within the ecosystem. Payment in ETH or stablecoins makes it easy for businesses to participate.
 - **For $EDIT Token Holders**: Offers governance rights and potential value accrual as the platform grows, creating a stake in the success of "Week in Ethereum News AI Edition." The restaking mechanism provides potential additional benefits and contributes to the economic security of the platform.
@@ -18,6 +18,7 @@ To build a sustainable, community-driven, and economically robust platform that 
 3. **Establish a Sustainable Economic Model**:  Leverage job posting revenue and the two-token model to create a self-sustaining platform that can operate and grow long-term.
 4. **Foster Community Governance**: Empower $EDIT holders with governance rights to shape the future direction of "Week in Ethereum News AI Edition."
 5. **Ensure Verifiability and Trust**: Implement mechanisms for content verification and editorial oversight to maintain high journalistic standards and build trust within the Ethereum community.
+6. **Enhance Verifiability and Transparency**:  Continuously explore and implement mechanisms to increase the verifiability and transparency of our AI agents and news curation processes, potentially leveraging advancements in verifiable computing and AVS architectures, inspired by the 'Level 1 Agent' framework.
 
 ## Success Metrics
 

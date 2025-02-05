@@ -8,7 +8,7 @@ This document outlines the technical design and architecture of the Week in Ethe
 
 - **AI Agents**:
     - **News Extractor Agent**: Implemented using web scraping techniques and Natural Language Processing (NLP) libraries (e.g., Beautiful Soup, Scrapy, NLTK, spaCy) to extract relevant news from online sources, specifically "Top-1000 X accounts in Ethereum ecosystem" on platforms like X/Twitter.
-    - **News Verifier Agent**: Utilizes APIs from fact-checking services and integrates with EigenLayer Actively Validated Services (AVSs) for cryptographic verification of news content. May incorporate machine learning models (e.g., using TensorFlow, PyTorch, scikit-learn) for source credibility analysis, sentiment analysis, and fake news detection. Operates within a Trusted Execution Environment (TEE) for secure and reliable verification processes.
+    - **News Verifier Agent**: Utilizes APIs from fact-checking services and integrates with EigenLayer Actively Validated Services (AVSs) for cryptographic verification of news content. May incorporate machine learning models (e.g., TensorFlow, PyTorch, scikit-learn) for source credibility analysis, sentiment analysis, and fake news detection. Operates within a Trusted Execution Environment (TEE) for secure and reliable verification processes.
     - **Editorial Agent**: Provides an interface for human editorial review and content refinement.  This could be a simplified Content Management System (CMS) built with a framework like Flask or Django, offering tools for editing, fact-checking, and managing news content.
     - **Publisher Agent**: Responsible for publishing the finalized news to various platforms, including the "WaiE X account" (e.g., via X/Twitter API) and the "WaiE Website" (potentially using a web content API or direct database interaction).  Also handles newsletter distribution via email services.
 - **Database**:  A persistent storage solution to store news articles, job postings, user data, and token-related information.  This could be a relational database (e.g., PostgreSQL, MySQL) for structured data or a NoSQL database (e.g., MongoDB, Cassandra) depending on scalability requirements and data structure complexity.
@@ -33,14 +33,22 @@ This section outlines the flow of information between system components, followi
 
 ## Integration Points
 
-- **External APIs**:
-    - **X/Twitter API**: For the News Extractor Agent to monitor "Top-1000 X accounts in Ethereum ecosystem".
-    - **Fact-Checking APIs**: APIs from services providing fact-checking and source verification data for the News Verifier Agent.
-    - **Email Service API (e.g., SendGrid, Mailgun)**: For the Publisher Agent to distribute newsletters.
-    - **Payment Gateway APIs**: For processing job posting payments in ETH or stablecoins.
-- **EigenLayer AVS (Core Verification Service)**:  Central integration with EigenLayer Actively Validated Services for verifiable and cryptographically-backed news verification by the News Verifier Agent. This is a key component for ensuring the trustworthiness of the curated news.
-- **Smart Contract Platform (e.g., Ethereum Mainnet or Layer 2)**:  For deploying and interacting with smart contracts related to the token model, governance, and reward distribution.
-- **Decentralized Exchanges (DEXs)**: Integration with DEXs (e.g., Uniswap, SushiSwap) to facilitate $EDIT token trading and liquidity.
+- **Core AI Agent Integrations**:
+    - **News Extractor Agent**: Integrates with **X/Twitter API** to monitor and extract data from "Top-1000 X accounts in Ethereum ecosystem". This is the primary data ingestion point for the news curation pipeline.
+    - **News Verifier Agent**: Integrates with **Fact-Checking APIs** for source verification and fact validation.  Crucially, it also integrates with **EigenLayer AVS (Core Verification Service)** for verifiable and cryptographically-backed news verification, ensuring trust and transparency in the verification process.
+    - **Editorial Agent**: Integrates with **Archives (Database)** to access historical news data and context for editorial review and content refinement.
+    - **Publisher Agent**: Integrates with **Email Service APIs (e.g., SendGrid, Mailgun)** for newsletter distribution and **WaiE Platform (API or Direct Database)** for website and X/Twitter account publishing.
+
+- **Payment and Tokenomics Integrations**:
+    - **Coinbase Developer Platform/AgentKit**: Integration with Coinbase AgentKit for processing job posting payments in USDC on Base, providing a streamlined and potentially fee-free payment experience.
+    - **Smart Contract Platform (e.g., Ethereum Mainnet or Layer 2)**:  For deploying and interacting with smart contracts related to the token model, governance, and reward distribution.
+    - **Decentralized Exchanges (DEXs)**: Integration with DEXs (e.g., Uniswap, SushiSwap) to facilitate $EDIT token trading and liquidity, enabling swapping and restaking mechanisms.
+
+- **External Data and Services**:
+    - **"Top-1000 X accounts in Ethereum ecosystem" (Data Source)**:  Represents the external social media data source that the News Extractor Agent monitors.
+    - **Fact-Checking APIs (External Verification Services)**: Represents external services that provide fact-checking and source verification data to the News Verifier Agent.
+    - **EigenLayer AVS (External Verifiable Computing)**: Represents the external EigenLayer Actively Validated Service that provides verifiable computing capabilities to the News Verifier Agent.
+    - **Beacon Chain Oracle (Succinct Telepathy)**: While not explicitly in "Integration Points" section, it's worth noting the system relies on a Beacon Chain Oracle (like Succinct Telepathy, as mentioned in `contracts/lib/eigenlayer-middleware/lib/eigenlayer-contracts/docs/core/EigenPodManager.md`) for verifiable state roots, especially for EigenLayer AVS interactions (though this might be abstracted within `eigensdk-js`).
 
 ## Security Considerations
 

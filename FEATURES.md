@@ -43,7 +43,7 @@
 
 - AI moderation to ensure content quality and relevance.
 - Editorial guidelines to maintain high standards.
-- **Verifiable Quality Control (Future)**:  Exploring verifiable methods for quality control, potentially leveraging policy AVS concepts to enforce editorial guidelines and ensure unbiased news curation.
+- **Verifiable Quality Control with AVS**:  Implementing verifiable methods for quality control, leveraging EigenLayer AVS to enforce editorial guidelines and ensure unbiased news curation.
 
 ## Feedback and Improvement
 
@@ -62,12 +62,16 @@
 - **Reputation**: Non-transferable reputation scores (SBTs) may be implemented to influence voting power and rewards based on contribution quality and history.
 - **Value Growth**: The value of $EDIT is intended to grow with the adoption, credibility, and overall success of the "Week in Ethereum News AI Edition" platform.
 
-## Verifiable AI Processes (Future)
+## Verifiable AI Processes with AVS and TEE
 
-In the future, we aim to enhance the verifiability of our AI agents and news curation processes, drawing inspiration from 'Level 1 Agent' principles and exploring technologies like Autonomous Verifiable Services (AVSs). This will increase transparency and user trust in the platform.
+We are enhancing the verifiability of our AI agents and news curation processes by drawing inspiration from 'Level 1 Agent' principles and leveraging technologies like Autonomous Verifiable Services (AVSs) and Trusted Execution Environments (TEEs). This approach increases transparency and user trust in the platform by providing cryptographic assurance of the integrity of the news verification process.
+
+## Substack and Email Newsletter Distribution
+
+- Implement Substack page and email list distribution to mirror the original "Week in Ethereum News" delivery method.
+- Automated newsletter publishing to Substack and email list.
 
 ## Future Features
 
 - Enhanced personalization for newsletter content.
 - Expanded job posting categories and features.
-- Substack Integration and Email List: Implement Substack page and email list distribution to mirror the original "Week in Ethereum News" delivery method.

@@ -38,7 +38,7 @@ This section outlines the flow of information between system components, followi
     - **Fact-Checking APIs**: APIs from services providing fact-checking and source verification data for the News Verifier Agent.
     - **Email Service API (e.g., SendGrid, Mailgun)**: For the Publisher Agent to distribute newsletters.
     - **Payment Gateway APIs**: For processing job posting payments in ETH or stablecoins.
-- **EigenLayer AVS**: Integration with EigenLayer for verifiable news verification by the News Verifier Agent.
+- **EigenLayer AVS (Core Verification Service)**:  Central integration with EigenLayer Actively Validated Services for verifiable and cryptographically-backed news verification by the News Verifier Agent. This is a key component for ensuring the trustworthiness of the curated news.
 - **Smart Contract Platform (e.g., Ethereum Mainnet or Layer 2)**:  For deploying and interacting with smart contracts related to the token model, governance, and reward distribution.
 - **Decentralized Exchanges (DEXs)**: Integration with DEXs (e.g., Uniswap, SushiSwap) to facilitate $EDIT token trading and liquidity.
 

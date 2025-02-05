@@ -1,6 +1,6 @@
 # Agent Architecture
 
-This diagram illustrates the architecture of the Week in Ethereum News AI Edition system, incorporating the AI-Agentic Journalism Workflow.
+This diagram illustrates the architecture of the Week in Ethereum News AI Edition system, incorporating the AI-Agentic Journalism Workflow and the Two-Token Model.
 
 ```mermaid
 graph TD
@@ -43,13 +43,13 @@ graph TD
 
 ### Job Posting Pipeline Agents
 - **Job Posting Agent**: Manages job submissions with 75-char limit validation and 4-issue tracking.
-- **Payment Processing Agent**: Handles $600/4-issue payments and renewal notifications.
-- **Verification and Moderation Agent**: **Verification Process & Moderation**: Communicates with verifiers (potentially human editors or specialized AI agents) to gather feedback on content drafts, including approvals, rejections, or required modifications. Ensures job postings meet guidelines and maintains listing quality. This agent performs both content verification and job posting moderation.
+- **Payment Processing Agent**: Handles job posting payments in ETH or stablecoins and manages renewal notifications. A portion of the revenue from job postings may be used to support the $EDIT token ecosystem (e.g., buying $EDIT for rewards distribution).
+- **Verification and Moderation Agent**: **Verification Process & Moderation**: Communicates with verifiers (potentially human editors or specialized AI agents) to gather feedback on content drafts, including approvals, rejections, or required modifications. Ensures job postings meet guidelines and maintains listing quality. This agent performs both content verification and job posting moderation.  Verifiers may be rewarded with $EDIT for their contributions.
 
 ### Quality Control Agents
 - **Distribution Agent**: **Publication**: Manages newsletter delivery and distribution channels, publishing finalized content as a newsletter.
 - **Verification and Moderation Agent**: (See description above under Job Posting Pipeline Agents - this agent is shared across pipelines for efficiency in verification and moderation tasks).
-- **Editorial Policy Agent**: **Editorial Review**: Collects verifier feedback, original reports (from Content Curation Agent), and archives. Based on this input, decides whether to revise the draft and resubmit it for verification or finalize the content for publication. Maintains editorial standards and section-specific guidelines.
+- **Editorial Policy Agent**: **Editorial Review**: Collects verifier feedback, original reports (from Content Curation Agent), and archives. Based on this input, decides whether to revise the draft and resubmit it for verification or finalize the content for publication. Maintains editorial standards and section-specific guidelines.  Reporters may be rewarded with $EDIT for their contributions.
 
 ## AI-Agentic Journalism Workflow
 
@@ -63,3 +63,6 @@ This section outlines the workflow of content creation, inspired by the AI-Agent
 
 This workflow ensures a structured approach to content creation, incorporating verification and editorial oversight at key stages.
 
+## Tokenomics
+
+The "Week in Ethereum News AI Edition" project incorporates a two-token model ($EDIT and ETH) to incentivize participation, ensure economic security, and foster community governance.  See the [FEATURES.md](FEATURES.md) document for a detailed description of the tokenomics model.  The Payment Processing Agent plays a key role in managing revenue from job postings and potentially using a portion of it to support the $EDIT ecosystem.  Rewards in $EDIT are distributed to contributors through the Verification and Moderation Agent and Editorial Policy Agent for their roles in content creation and verification.

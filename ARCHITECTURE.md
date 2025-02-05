@@ -4,77 +4,71 @@ This diagram illustrates the architecture of the Week in Ethereum News AI Editio
 
 ```mermaid
 graph TD
-    A[Content Curation Agent] --> B[Category Classification Agent]
-    B --> C[Content Summarization Agent]
-    C --> D[Newsletter Assembly Agent]
-
-    E[Job Posting Agent] --> F[Payment Processing Agent]
-    F --> G[Verification and Moderation Agent]
-    G --> D
-
-    H[Stats Collection Agent] --> D
-    I[Event Tracking Agent] --> D
-
-    D --> J[Distribution Agent]
-
-    K[Verification and Moderation Agent] --> A
-    K --> C
-    K --> G
-
-    L[Editorial Policy Agent] --> A
-    L --> C
-    L --> G
+    A[Top-1000 X accounts in Ethereum ecosystem] --> B[News Extractor Agent]
+    B --> C[News Verifier Agent]
+    C --> D[AVS]
+    C -- 4 --> E[Editorial Agent]
+    D -- 3 --> C
+    E <-- 5 --> F[Archives]
+    E --> G[Publisher Agent]
+    G -- Post on WaiE X account or Share in WaiE Website --> H[WaiE Platform]
 
     style D fill:#f9f,stroke:#333,stroke-width:2px
-    style L fill:#f0f,stroke:#333,stroke-width:2px
+    style E fill:#f0f,stroke:#333,stroke-width:2px
+    style G fill:#ccf,stroke:#333,stroke-width:2px
+
+    subgraph "Tee Enviroment"
+    B
+    C
+    D
+    E
+    F
+    end
 ```
 
 ## Agent Descriptions
 
 ### Content Pipeline Agents
-- **Content Curation Agent**: **Report Submission & Draft Generation**: Monitors and collects Ethereum news from trusted and potentially verifiable sources, validates links, and evaluates source credibility.  Compiles an initial draft of news items, ensuring privacy and protecting original sources. Audio content is transcribed, and data is analyzed as needed.
-- **Category Classification Agent**: Classifies content into granular newsletter sections:
-    - Protocol Upgrades (Pectra)
-    - Layer 1
-    - Centralization Watch
-    - EIPs/Standards
-    - Stuff for developers
-    - Security
-    - Regulation/Business/Tokens
-    - General Ethereum Ecosystem
-- **Content Summarization Agent**: Generates technically accurate summaries maintaining Week in Ethereum News style, contributing to the draft generation for each category.
-- **Newsletter Assembly Agent**: Structures content into consistent newsletter format with all required sections, including news categories, job postings, onchain stats, and upcoming dates.
 
-### Data Collection Agents
-- **Stats Collection Agent**: Aggregates onchain metrics for the "Onchain Stats Section" of the newsletter, including gas fees, prices, and key ratios (ETHUSD, ETHBTC).
-- **Event Tracking Agent**: Maintains database of upcoming events, conferences, and protocol upgrades for the "Upcoming Dates of Note" section of the newsletter.
+- **News Extractor Agent**: **Report Submission & Draft Generation**: Monitors and collects Ethereum news from "Top-1000 X accounts in Ethereum ecosystem".  This agent extracts relevant information from these sources, acting as the initial point of contact for news gathering.
+- **News Verifier Agent**: **Verification Process**:  This agent is responsible for verifying the information extracted by the News Extractor Agent.  It leverages **EigenLayer Actively Validated Services (AVSs)** to perform verifiable checks on the news, enhancing the trustworthiness of the curated content.  Verification techniques may include source credibility analysis and fact-checking. This agent operates within a **Trusted Execution Environment (TEE)** to ensure secure and reliable verification processes.
+- **AVS (EigenLayer Actively Validated Service)**:  An **Autonomous Verifiable Service** on EigenLayer that provides verifiable services for the News Verifier Agent.  AVS offers an additional layer of trust and transparency to the news verification process. The project is exploring the concept of **"Level 1 Agents"** as a standardized way for agents to interact with AVSs, aiming for a more verifiable and transparent news curation process.
 
-### Job Posting Pipeline Agents
-- **Job Posting Agent**: Manages job submissions with 75-char limit validation and 4-issue tracking.
-- **Payment Processing Agent**: Handles job posting payments in ETH or stablecoins and manages renewal notifications. A portion of the revenue from job postings may be used to support the $EDIT token ecosystem (e.g., buying $EDIT for rewards distribution).
-- **Verification and Moderation Agent**: **Verification Process & Moderation**: Employs verifiable methods to communicate with verifiers (potentially human editors or specialized AI agents) to gather feedback on content drafts, including approvals, rejections, or required modifications, across all news categories and job postings. Ensures job postings meet guidelines and maintains listing quality. This agent performs both content verification and job posting moderation.  Verifiers may be rewarded with $EDIT for their contributions.
+### Editorial and Publishing Agents
 
-### Quality Control Agents
-- **Distribution Agent**: **Publication**: Manages newsletter delivery and distribution channels, publishing finalized content as a newsletter.
-- **Verification and Moderation Agent**: (See description above under Job Posting Pipeline Agents - this agent is shared across pipelines for efficiency in verification and moderation tasks).
-- **Editorial Policy Agent**: **Editorial Review**: Collects verifier feedback, original reports (from Content Curation Agent), and archives. Based on this input, decides whether to revise the draft and resubmit it for verification or finalize the content for publication, ensuring adherence to editorial standards and section-specific guidelines across all categories.  Reporters may be rewarded with $EDIT for their contributions.
+- **Editorial Agent**: **Editorial Review**:  This agent performs the editorial review of the verified news. It receives feedback from the News Verifier Agent and can consult "Archives" for context.  The Editorial Agent makes decisions on content revisions and finalization, ensuring adherence to editorial standards.  It operates within the **Trusted Execution Environment (TEE)**.
+- **Publisher Agent**: **Publication**:  Responsible for publishing the finalized news.  This agent distributes the content to the "WaiE X account" (e.g., on X/Twitter) and/or the "WaiE Website", making the curated news accessible to the audience.
+
+## Data Flow
+
+This section outlines the flow of information between agents, as depicted in the architecture diagram:
+
+1.  **Data Source**: The process begins with data from "Top-1000 X accounts in Ethereum ecosystem", which serves as the primary source of news and information.
+2.  **News Extraction**: The **News Extractor Agent** (1) extracts relevant news and information from the data source.
+3.  **News Verification**: The extracted information is passed to the **News Verifier Agent** (2), which utilizes **AVS (EigenLayer Actively Validated Service)** (3) to perform verifiable checks.
+4.  **Feedback Loop**: A feedback loop (4) exists between the **News Verifier Agent** and the **Editorial Agent**. If the verification process requires further editorial review or input, the News Verifier Agent communicates with the Editorial Agent.
+5.  **Archives Consultation**: The **Editorial Agent** (5) can consult "Archives" for historical context and information relevant to the news being reviewed.
+6.  **Publication**: Once the editorial review is complete, the **Editorial Agent** sends the finalized news to the **Publisher Agent** (6), which publishes the content on the "WaiE X account" or "WaiE Website".
 
 ## AI-Agentic Journalism Workflow
 
 This section outlines the workflow of content creation, inspired by the AI-Agentic Journalism model:
 
-1.  **Report Submission (Content Curation Agent)**: The Content Curation Agent acts as the initial point of contact for news "reports" by continuously monitoring news sources and identifying relevant information.
-2.  **Draft Generation (Content Curation Agent, Category Classification Agent, Content Summarization Agent)**: The Content Curation Agent, along with the Category Classification Agent and Content Summarization Agent, collaboratively compile an initial draft of the newsletter content, categorized into relevant sections and summarized for each section.
-3.  **Verification Process (Verification and Moderation Agent)**: The Verification and Moderation Agent takes the draft content and initiates the verification process. This involves communicating with verifiers to gather feedback, including approvals, rejections, or requests for modifications for each news item and job posting.
-4.  **Editorial Review (Editorial Policy Agent)**: The Editorial Policy Agent reviews the verifier feedback, the original curated content, and potentially past newsletters. Based on this comprehensive input, it makes an editorial decision: either revise the draft and send it back for verification, or finalize the content for publication, maintaining editorial quality across all sections.
-5.  **Publication (Distribution Agent)**: Once the content is finalized by the Editorial Policy Agent, the Distribution Agent takes over to publish the content through the designated newsletter distribution channels.
+1.  **Report Submission (News Extractor Agent)**: The News Extractor Agent continuously monitors news sources ("Top-1000 X accounts in Ethereum ecosystem") and identifies relevant information, acting as the initial point of "report" submission.
+2.  **Verification Process (News Verifier Agent, AVS)**: The News Verifier Agent takes the extracted information and initiates the verification process, leveraging EigenLayer AVS for verifiable checks.
+3.  **Editorial Review (Editorial Agent)**: The Editorial Agent reviews the verified news, incorporating feedback and consulting archives as needed. It makes editorial decisions to finalize the content.
+4.  **Publication (Publisher Agent)**: Once the content is finalized, the Publisher Agent publishes the news through the designated channels ("WaiE X account" and "WaiE Website").
 
-This workflow ensures a structured approach to content creation, incorporating verification and editorial oversight at key stages, and organized into clear newsletter sections.
+This workflow provides a structured approach to news curation, emphasizing verifiability and editorial oversight.
 
 ## Tokenomics
 
-The "Week in Ethereum News AI Edition" project incorporates a two-token model ($EDIT and ETH) to incentivize participation, ensure economic security, and foster community governance.  See the [FEATURES.md](FEATURES.md) document for a detailed description of the tokenomics model.  The Payment Processing Agent plays a key role in managing revenue from job postings and potentially using a portion of it to support the $EDIT ecosystem.  Rewards in $EDIT are distributed to contributors through the Verification and Moderation Agent and Editorial Policy Agent for their roles in content creation and verification.
+The "Week in Ethereum News AI Edition" project incorporates a two-token model ($EDIT and ETH) to incentivize participation, ensure economic security, and foster community governance.  See the [FEATURES.md](FEATURES.md) document for a detailed description of the tokenomics model.
 
 ## Verifiability Considerations and Future Directions
 
-The "Week in Ethereum News AI Edition" project is committed to building a trustworthy and transparent news platform.  Inspired by the 'Level 1 Agent' concept and EigenLayer's Autonomous Verifiable Services (AVSs) architecture, we are exploring ways to enhance the verifiability of our AI agents.  While our current agents operate off-chain for practical reasons, we are designing our system with verifiability in mind.  Future directions include investigating verifiable data sources, exploring policy AVS concepts for editorial guidelines enforcement, and considering the potential integration of verifiable offchain inference technologies like EigenLayer AVSs in the long term.  This commitment to verifiability aims to provide users with cryptographic assurance of the integrity and unbiased nature of our news curation process.
+The "Week in Ethereum News AI Edition" project is strongly committed to building a trustworthy and transparent news platform.  Inspired by the 'Level 1 Agent' concept and EigenLayer's Autonomous Verifiable Services (AVSs) architecture, this architecture is designed with verifiability at its core.
+
+The **News Verifier Agent** utilizes **EigenLayer AVS** to provide cryptographic assurance of the integrity and unbiased nature of our news curation process.  By integrating with AVS, the system aims to enhance the transparency and trustworthiness of the AI agents' verification process.  The agents operate within a **Trusted Execution Environment (TEE)**, further strengthening the security and reliability of the system.
+
+Future directions include deeper exploration of EigenLayer AVS capabilities, investigating verifiable data sources, and continuously improving the verifiability and transparency of the AI-driven news curation process.  The project aims to be at the forefront of verifiable AI journalism, providing users with confidence in the integrity of the information presented.

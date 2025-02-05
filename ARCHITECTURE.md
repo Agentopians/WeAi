@@ -63,7 +63,19 @@ This workflow provides a structured approach to news curation, emphasizing verif
 
 ## Tokenomics
 
-The "Week in Ethereum News AI Edition" project incorporates a two-token model ($EDIT and ETH) to incentivize participation, ensure economic security, and foster community governance.  See the [FEATURES.md](FEATURES.md) document for a detailed description of the tokenomics model.
+The "Week in Ethereum News AI Edition" project employs a **two-token model** to create a sustainable ecosystem and incentivize participation in news curation and platform governance.  The model utilizes two tokens: **$EDIT** and **ETH**.
+
+- **$EDIT (Editorial Coin)**: This is the platform's utility and governance token.  $EDIT is used to:
+    - **Reward Content Contributors**:  Reporters and Verifiers are rewarded with $EDIT for their contributions to news curation and verification.
+    - **Enable Governance**: $EDIT holders gain governance rights, allowing them to participate in decision-making processes for the platform's future direction.
+    - **Future Platform Utility**: $EDIT may unlock additional features and functionalities within the platform in the future.
+
+- **ETH (Restaking & Economic Security Layer)**:  ETH plays a crucial role in the economic model by:
+    - **Providing Economic Security**: ETH is used as a restaking layer, contributing to the platform's economic security and stability.
+    - **Facilitating $EDIT Swapping**: $EDIT holders can swap their $EDIT tokens for ETH, creating a link between the platform's utility token and a well-established cryptocurrency.
+    - **Job Posting Payments**: While job postings are priced in USD, payments from sponsors are processed in ETH or stablecoins, providing a revenue stream for the platform.
+
+The two-token model is designed to create a balanced and self-sustaining ecosystem where $EDIT incentivizes contributions and governance, while ETH provides economic security and a bridge to the broader cryptocurrency market.  For a detailed breakdown of the tokenomics model, please refer to the [FEATURES.md](FEATURES.md) document.
 
 ## Verifiability Considerations and Future Directions
 

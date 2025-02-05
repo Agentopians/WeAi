@@ -21,22 +21,22 @@
 - [ ] Collect user feedback on newsletter content and format.
 - [ ] Implement improvements based on feedback.
 
-## Phase 5: Sponsor Integrations
+## Phase 5: Core Sponsor Integrations & Verifiability
 
-- [ ] Implement Autonome Integration Module  
-  • Develop a wrapper or deployment configuration for hosting our AI agents on Autonome.  
-- [ ] Integrate with Coinbase Developer Platform  
-  • Build a module using AgentKit integration to trigger onchain transactions (e.g. for job posting payments).  
-- [ ] Build Consumer-Facing Interface for Flow/Base  
-  • Develop a public UI (web app or mini-app) that connects with Flow/Base RPC endpoints and displays on-chain metrics alongside newsletter content.  
-- [ ] Develop Multi-Channel Interface via Gaia/Collab.Land  
-  • Implement integration utilizing the Collab.Land SDK to enable access via platforms like Discord or Telegram.  
-- [ ] Add The Graph Data Indexing Service  
-  • Create a service component that queries a dedicated subgraph for Ethereum metrics and includes the data in our content pipeline.  
-- [ ] Establish Plugin Architecture for Future Sponsor Integrations  
-  • Refactor the AI agent framework to support modular plugins for sponsors such as Warden, Lit Protocol, AWS Bedrock, and others.
-
-- [ ] Update TECHNICAL_DESIGN.md with details of all sponsor integration modules.
+- [ ] Integrate Coinbase Developer Platform for Payments
+    - [ ] Implement AgentKit payment flow for job postings using USDC on Base.
+    - [ ] Develop backend Payment Processing Agent for transaction management and verification.
+    - [ ] Integrate payment UI in the frontend using AgentKit SDK.
+- [ ] Implement EigenLayer AVS Integration
+    - [ ] Develop News Verifier Agent to utilize EigenLayer AVS for verifiable news checks.
+    - [ ] Configure and test AVS integration within the News Verifier Agent.
+- [ ] Set up Trusted Execution Environment (TEE)
+    - [ ] Configure TEE for News Verifier Agent and Editorial Agent.
+    - [ ] Implement secure deployment and operation of agents within TEE.
+    - [ ] Conduct security assessment of TEE configuration.
+- [ ] Establish Plugin Architecture for Sponsor Integrations
+    - [ ] Refactor AI agent framework to support modular plugins.
+    - [ ] Define plugin interface and documentation for sponsor integrations.
 
 ## Future Tasks
 

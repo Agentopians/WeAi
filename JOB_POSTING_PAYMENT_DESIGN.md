@@ -18,7 +18,34 @@ The job posting payment system will involve the following key stages:
 4.  **Database Update:** Upon successful payment confirmation, the backend will update the job posting record in the database to reflect "paid" status.
 5.  **Job Posting Activation:**  Once payment is confirmed, the job posting will be scheduled for inclusion in the newsletter pipeline.
 
-## 3. Components
+## 3. Payment Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant Sponsor (Frontend)
+    participant Backend API (Payment Processing Agent)
+    participant Coinbase AgentKit
+    participant Base Network (Blockchain)
+    participant Database
+
+    Sponsor (Frontend)->>Backend API (Payment Processing Agent): Submit Job Posting & Initiate Payment
+    Backend API (Payment Processing Agent)->>Coinbase AgentKit: Prepare USDC Payment Transaction
+    Coinbase AgentKit->>Base Network (Blockchain): Send USDC Transaction
+    Base Network (Blockchain)-->>Coinbase AgentKit: Transaction Hash
+    Coinbase AgentKit->>Backend API (Payment Processing Agent): Transaction Hash
+    Backend API (Payment Processing Agent)->>Coinbase AgentKit: Monitor Transaction Status
+    Coinbase AgentKit->>Base Network (Blockchain): Query Transaction Status
+    Base Network (Blockchain)-->>Coinbase AgentKit: Transaction Status Update
+    Coinbase AgentKit->>Backend API (Payment Processing Agent): Transaction Status Update (Success)
+    Backend API (Payment Processing Agent)->>Base Network (Blockchain): Verify Transaction Confirmation
+    Base Network (Blockchain)-->>Backend API (Payment Processing Agent): Transaction Confirmation
+    Backend API (Payment Processing Agent)->>Database: Update Job Posting Payment Status to "Paid"
+    Database-->>Backend API (Payment Processing Agent): OK
+    Backend API (Payment Processing Agent)-->>Sponsor (Frontend): Payment Confirmation
+    Sponsor (Frontend)--)Database: Job Posting Activated
+```
+
+## 4. Components
 
 - **Frontend (Web Interface):**
     - Job posting submission form (already exists or needs to be created).
@@ -40,7 +67,7 @@ The job posting payment system will involve the following key stages:
     - Utilizing AgentKit SDKs and APIs for blockchain interactions.
     - Base network for USDC transactions.
 
-## 4. API Interactions and Data Flow
+## 5. API Interactions and Data Flow
 
 1.  **Frontend to Backend (Payment Request):**
     - Frontend sends a request to the backend API (e.g., `/api/job_postings/{job_posting_id}/payment`) to initiate payment.
@@ -61,7 +88,7 @@ The job posting payment system will involve the following key stages:
     - Backend sends a confirmation response to the frontend, indicating successful payment.
     - Frontend displays confirmation to the user.
 
-## 5. Security Considerations
+## 6. Security Considerations
 
 - **AgentKit Security:** Rely on Coinbase AgentKit's security best practices for wallet management and transaction handling.
 - **API Security:** Implement proper authentication and authorization for backend API endpoints to prevent unauthorized access and payment manipulation.
@@ -69,7 +96,7 @@ The job posting payment system will involve the following key stages:
 - **Transaction Verification:** Ensure robust transaction verification on the backend by checking transaction confirmations on the Base blockchain.
 - **Error Handling:** Implement comprehensive error handling throughout the payment flow to gracefully manage failures and provide informative error messages to users.
 
-## 6. Implementation Steps
+## 7. Implementation Steps
 
 1.  **AgentKit Setup and Exploration:**
     - Create a Coinbase Developer account.

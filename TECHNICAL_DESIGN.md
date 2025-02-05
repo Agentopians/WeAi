@@ -18,15 +18,18 @@ This document outlines the technical design and architecture of the Week in Ethe
 
 ## Data Flow
 
-1. **Content Ingestion**: News articles are collected and stored in the database as part of the "Report Submission" stage of the AI-Agentic Journalism Workflow.
-2. **Content Processing**: AI agents process and categorize the content during the "Draft Generation" and "Verification Process" stages.
-3. **Newsletter Generation**: Processed content is compiled into a newsletter format during the "Editorial Review" stage.
-4. **Distribution**: The newsletter is distributed to subscribers via email in the "Publication" stage.
-5. **Job Posting Payments**: Payments for job postings in ETH or stablecoins are processed and recorded.
-6. **$EDIT Token Distribution**: Rewards in $EDIT are distributed to contributors based on their roles and contributions, managed by smart contracts.
-7. **Governance Interactions**: $EDIT holders can participate in governance processes through the web interface, interacting with governance smart contracts.
-8. **$EDIT - ETH Swapping & Restaking**: Mechanisms for swapping $EDIT to ETH and restaking ETH will be implemented, potentially through smart contracts and integrated into the web interface.
-9. **Verifiability Process with AVS**: The News Verifier Agent interacts with EigenLayer AVS to perform verifiable checks on the news content, ensuring transparency and trustworthiness of the verification process.
+This section outlines the flow of information between system components, following the AI-Agentic Journalism workflow.
+
+1.  **Data Source**: The flow begins with the **"Data Source"**: Information from "Top-1000 X accounts in Ethereum ecosystem" is collected as the primary source of news and relevant information from the Ethereum ecosystem.
+2.  **News Extraction**: The **News Extractor Agent** extracts relevant news and information from the "Data Source". This step corresponds to the "Report Submission & Draft Generation" stage of the AI-Agentic workflow.
+3.  **News Verification with AVS**: The extracted information is sent to the **News Verifier Agent**. This agent, utilizing **EigenLayer AVS**, performs the "Verification Process" to ensure the accuracy and credibility of the information. This step includes interaction with AVS for cryptographic verification.
+4.  **Editorial Review and Feedback Loop**: The **News Verifier Agent** may initiate a feedback loop with the **Editorial Agent** if additional editorial review is required during the verification process. The **Editorial Agent** performs the "Editorial Review", consulting "Archives" if necessary, and refines the verified content.
+5.  **Archival Consultation**: During the "Editorial Review", the **Editorial Agent** may consult **Archives** to obtain historical context or additional information relevant to the news.
+6.  **Publication**: Once the editorial review is complete, the **Editorial Agent** sends the finalized news to the **Publisher Agent**. The **Publisher Agent** handles "Publication", distributing the content through "WaiE X account" and "WaiE Website", as well as in the weekly newsletter.
+7.  **Job Posting Payments**: Payments for job postings in ETH or stablecoins are processed and recorded. This process is independent of the main news flow but is an important component of the system.
+8.  **$EDIT Token Distribution**: Rewards in $EDIT are distributed to contributors based on their roles and contributions, managed by smart contracts.
+9.  **Governance Interactions**: $EDIT holders can participate in governance processes through the web interface, interacting with governance smart contracts.
+10. **$EDIT - ETH Swapping & Restaking**: Mechanisms for swapping $EDIT to ETH and restaking ETH will be implemented, potentially through smart contracts and integrated into the web interface.
 
 ## Integration Points
 

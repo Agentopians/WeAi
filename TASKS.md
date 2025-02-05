@@ -8,7 +8,7 @@
 
 ## Phase 2: Job Posting System
 
-- [ ] Implement job posting submission and payment processing.
+- [ ] Implement job posting submission and payment processing.  See [JOB_POSTING_PAYMENT_DESIGN.md](JOB_POSTING_PAYMENT_DESIGN.md) for detailed plan.
 - [ ] Integrate job postings into the newsletter.
 
 ## Phase 3: Quality Control

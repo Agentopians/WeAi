@@ -3,18 +3,41 @@
 ## AI-Powered News Curation
 
 - Automated collection of Ethereum news from trusted sources.
-- AI-driven categorization and summarization of news articles.
+- AI-driven categorization of news articles into relevant sections.
+    - Protocol Upgrades (Pectra)
+    - Layer 1
+    - Centralization Watch
+    - EIPs/Standards
+    - Stuff for developers
+    - Security
+    - Regulation/Business/Tokens
+    - General Ethereum Ecosystem
+- AI-driven summarization of news articles.
 
 ## Weekly Newsletter
 
 - Automated generation of a comprehensive weekly newsletter.
-- Includes curated news, job postings, and upcoming events.
+- Includes distinct sections:
+    - Curated News (organized by categories above)
+    - Job Postings from sponsors (\$600 for 4 issues, 75 char limit)
+    - Onchain Stats Section (gas fees, ETH price, ETH/BTC ratio)
+    - Upcoming Dates of Note (Ethereum events and conferences)
 
 ## Job Posting System
 
 - Integrated platform for sponsors to post job listings.
 - Payment for job postings in ETH or stablecoins.
-- Automated listing management.
+- Automated listing management for 4 issues per listing.
+- Job listing fee: \$600 for 4 issues (75 character limit per listing).
+
+## Centralization Watch
+
+- Dedicated section in the newsletter to monitor Ethereum centralization risks.
+- Tracks key metrics:
+    - Staking pool dominance (e.g., Lido).
+    - Client diversity (execution and consensus layer).
+    - Geographic diversity of nodes.
+    - Other emerging centralization concerns.
 
 ## Quality Control
 

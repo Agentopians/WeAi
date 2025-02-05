@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the technical design and architecture of the Week in Ethereum News AI Edition project. It provides details on the system components, data flow, and integration points.
+This document outlines the technical design and architecture of the Week in Ethereum News AI Edition project. It provides details on the system components, data flow, and integration points. The system follows an **AI-Agentic Journalism Workflow** for content creation, which includes stages for report submission, draft generation, verification, editorial review, and publication.  More details on this workflow can be found in the [ARCHITECTURE.md](ARCHITECTURE.md) document.
 
 ## System Components
 
@@ -13,10 +13,10 @@ This document outlines the technical design and architecture of the Week in Ethe
 
 ## Data Flow
 
-1. **Content Ingestion**: News articles are collected and stored in the database.
-2. **Content Processing**: AI agents process and categorize the content.
-3. **Newsletter Generation**: Processed content is compiled into a newsletter format.
-4. **Distribution**: The newsletter is distributed to subscribers via email.
+1. **Content Ingestion**: News articles are collected and stored in the database as part of the "Report Submission" stage of the AI-Agentic Journalism Workflow.
+2. **Content Processing**: AI agents process and categorize the content during the "Draft Generation" and "Verification Process" stages.
+3. **Newsletter Generation**: Processed content is compiled into a newsletter format during the "Editorial Review" stage.
+4. **Distribution**: The newsletter is distributed to subscribers via email in the "Publication" stage.
 
 ## Integration Points
 

@@ -1,30 +1,30 @@
 # Agent Architecture
 
-This diagram illustrates the architecture of the Week in Ethereum News AI Edition system.
+This diagram illustrates the architecture of the Week in Ethereum News AI Edition system, incorporating the AI-Agentic Journalism Workflow.
 
 ```mermaid
 graph TD
     A[Content Curation Agent] --> B[Category Classification Agent]
     B --> C[Content Summarization Agent]
     C --> D[Newsletter Assembly Agent]
-    
+
     E[Job Posting Agent] --> F[Payment Processing Agent]
-    F --> G[Moderation Agent]
+    F --> G[Verification and Moderation Agent]
     G --> D
-    
+
     H[Stats Collection Agent] --> D
     I[Event Tracking Agent] --> D
-    
+
     D --> J[Distribution Agent]
-    
-    K[Quality Control Agent] --> A
+
+    K[Verification and Moderation Agent] --> A
     K --> C
     K --> G
-    
+
     L[Editorial Policy Agent] --> A
     L --> C
     L --> G
-    
+
     style D fill:#f9f,stroke:#333,stroke-width:2px
     style L fill:#f0f,stroke:#333,stroke-width:2px
 ```
@@ -32,9 +32,9 @@ graph TD
 ## Agent Descriptions
 
 ### Content Pipeline Agents
-- **Content Curation Agent**: Monitors and collects Ethereum news from trusted sources, validates links, and evaluates source credibility.
+- **Content Curation Agent**: **Report Submission & Draft Generation**: Monitors and collects Ethereum news from trusted sources, validates links, and evaluates source credibility.  Compiles an initial draft of news items, ensuring privacy and protecting original sources. Audio content is transcribed, and data is analyzed as needed.
 - **Category Classification Agent**: Classifies content into newsletter sections (Layer 1, Security, EIPs, etc.).
-- **Content Summarization Agent**: Generates technically accurate summaries maintaining Week in Ethereum News style.
+- **Content Summarization Agent**: Generates technically accurate summaries maintaining Week in Ethereum News style, contributing to the draft generation.
 - **Newsletter Assembly Agent**: Structures content into consistent newsletter format with all required sections.
 
 ### Data Collection Agents
@@ -44,9 +44,22 @@ graph TD
 ### Job Posting Pipeline Agents
 - **Job Posting Agent**: Manages job submissions with 75-char limit validation and 4-issue tracking.
 - **Payment Processing Agent**: Handles $600/4-issue payments and renewal notifications.
-- **Moderation Agent**: Ensures job postings meet guidelines and maintains listing quality.
+- **Verification and Moderation Agent**: **Verification Process & Moderation**: Communicates with verifiers (potentially human editors or specialized AI agents) to gather feedback on content drafts, including approvals, rejections, or required modifications. Ensures job postings meet guidelines and maintains listing quality. This agent performs both content verification and job posting moderation.
 
 ### Quality Control Agents
-- **Distribution Agent**: Manages newsletter delivery and distribution channels.
-- **Quality Control Agent**: Verifies technical accuracy, link validity, and style consistency.
-- **Editorial Policy Agent**: Maintains editorial standards and section-specific guidelines.
+- **Distribution Agent**: **Publication**: Manages newsletter delivery and distribution channels, publishing finalized content as a newsletter.
+- **Verification and Moderation Agent**: (See description above under Job Posting Pipeline Agents - this agent is shared across pipelines for efficiency in verification and moderation tasks).
+- **Editorial Policy Agent**: **Editorial Review**: Collects verifier feedback, original reports (from Content Curation Agent), and archives. Based on this input, decides whether to revise the draft and resubmit it for verification or finalize the content for publication. Maintains editorial standards and section-specific guidelines.
+
+## AI-Agentic Journalism Workflow
+
+This section outlines the workflow of content creation, inspired by the AI-Agentic Journalism model:
+
+1.  **Report Submission (Content Curation Agent)**: The Content Curation Agent acts as the initial point of contact for news "reports" by continuously monitoring news sources and identifying relevant information.
+2.  **Draft Generation (Content Curation Agent, Category Classification Agent, Content Summarization Agent)**: The Content Curation Agent, along with the Category Classification Agent and Content Summarization Agent, collaboratively compile an initial draft of the newsletter content. This involves categorizing news items and generating summaries.
+3.  **Verification Process (Verification and Moderation Agent)**: The Verification and Moderation Agent takes the draft content and initiates the verification process. This involves communicating with verifiers to gather feedback, including approvals, rejections, or requests for modifications.
+4.  **Editorial Review (Editorial Policy Agent)**: The Editorial Policy Agent reviews the verifier feedback, the original curated content, and potentially past newsletters. Based on this comprehensive input, it makes an editorial decision: either revise the draft and send it back for verification, or finalize the content for publication.
+5.  **Publication (Distribution Agent)**: Once the content is finalized by the Editorial Policy Agent, the Distribution Agent takes over to publish the content through the designated newsletter distribution channels.
+
+This workflow ensures a structured approach to content creation, incorporating verification and editorial oversight at key stages.
+

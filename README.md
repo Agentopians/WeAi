@@ -19,7 +19,7 @@ Week in Ethereum News AI Edition is a project developed during the ETH Global Ag
 
 ## Architecture
 
-Our system uses a multi-agent architecture where specialized AI agents handle different aspects of the newsletter production pipeline. See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed information about each agent's role and responsibilities.
+Our system uses a multi-agent architecture where specialized AI agents handle different aspects of the newsletter production pipeline. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed information about each agent's role and responsibilities.
 
 ## Getting Started
 
@@ -46,11 +46,11 @@ cp .env.example .env
 
 ## Documentation
 
-- [Vision Document](VISION.md) - Project goals and value proposition
-- [Architecture](ARCHITECTURE.md) - System design and agent interactions
-- [Technical Design](TECHNICAL_DESIGN.md) - Technical implementation details
-- [Features](FEATURES.md) - Feature list and scope
-- [Tasks](TASKS.md) - Development roadmap and task breakdown
+- [Vision Document](docs/VISION.md) - Project goals and value proposition
+- [Architecture](docs/ARCHITECTURE.md) - System design and agent interactions
+- [Technical Design](docs/TECHNICAL_DESIGN.md) - Technical implementation details
+- [Features](docs/FEATURES.md) - Feature list and scope
+- [Tasks](docs/TASKS.md) - Development roadmap and task breakdown
 
 ## Contributing
 

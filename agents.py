@@ -29,8 +29,6 @@ from mytools import (
 nest_asyncio.apply()
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
-x_api_key = os.getenv("X-API-KEY")
-google_api_key = os.getenv("GOOGLE_API_KEY")
 
 config_list = [
     {

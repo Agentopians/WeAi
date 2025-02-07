@@ -1,0 +1,5 @@
+-e git+https://github.com/zellular-xyz/eigensdk-python@main#egg=eigensdk
+web3
+PyYAML==6.0.1
+Flask==3.0.3
+openai

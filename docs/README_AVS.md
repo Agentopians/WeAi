@@ -33,8 +33,9 @@ make install
 ```
 
 5. Python3
-6. Install required modules, downgrade web3 and re-install eth-account to avoid bugs (TODO: Fix said bugs 🪲):
+6. Create a virtual environment (use the appropriate python command for your environment) and nnstall required modules. Downgrade web3 and re-install eth-account to avoid bugs (TODO: Fix said bugs 🪲):
 ```
+python3 -m venv .venv 
 pip install -r requirements.txt
 pip install --force web3==6.19.0
 pip install --force eth-account==0.13.5

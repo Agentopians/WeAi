@@ -6,7 +6,7 @@ import "./INewsletterPromptTaskManager.sol";
 import "@eigenlayer-middleware/src/ServiceManagerBase.sol";
 
 /**
- * @title Primary entrypoint for procuring services from IncredibleSquaring.
+ * @title Primary entrypoint for procuring services from NewsletterPrompt.
  * @author Layr Labs, Inc.
  */
 contract NewsletterPromptServiceManager is ServiceManagerBase {
@@ -19,7 +19,7 @@ contract NewsletterPromptServiceManager is ServiceManagerBase {
     modifier onlyNewsletterPromptTaskManager() {
         require(
             msg.sender == address(newsletterPromptTaskManager),
-            "onlyIncredibleSquaringTaskManager: not from credible squaring task manager"
+            "onlyNewsletterPromptTaskManager: not from newsletter prompt task manager"
         );
         _;
     }

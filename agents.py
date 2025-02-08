@@ -201,7 +201,7 @@ def interact_freely_with_user(mode="society"): # MODIFIED - Step 4.4
             "aggregator_server_ip_port_address": "localhost:8090", # Or your aggregator server address
             "ecdsa_private_key_store_path": "tests/keys/aggregator.ecdsa.key.json", # Adjust path
             "avs_registry_coordinator_address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9", # Adjust address
-            "operator_state_retriever_addr": "0x95401dc811bb5740090279Ba06cfA8fcF6113778" # Adjust address
+            "operator_state_retriever_address": "0x95401dc811bb5740090279Ba06cfA8fcF6113778" # ADDED THIS LINE - Step 4.4 - FIX KeyError
         }
         aggregator = Aggregator(aggregator_config) # Initialize Aggregator (ensure you've imported Aggregator class)
 
@@ -243,6 +243,7 @@ def interact_freely_with_user(mode="society"): # MODIFIED - Step 4.4
 if __name__ == "__main__":
     import argparse
     import time # Ensure time is imported at the top
+    import logging # Ensure logging is imported at the top
 
     parser = argparse.ArgumentParser(description='AutoGen Chat Interface')
     parser.add_argument(

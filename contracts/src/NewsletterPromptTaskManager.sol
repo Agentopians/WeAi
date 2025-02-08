@@ -86,7 +86,7 @@ contract NewsletterPromptTaskManager is
         string memory agentPrompt,
         uint32 quorumThresholdPercentage,
         bytes calldata quorumNumbers
-    ) external onlyTaskGenerator {
+    ) external {
         // create a new task struct
         INewsletterPromptTaskManager.Task memory newTask;
         newTask.taskType = _taskType;

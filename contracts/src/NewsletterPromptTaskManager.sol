@@ -274,7 +274,7 @@ contract NewsletterPromptTaskManager is
         //     task.taskCreatedBlock
         // );
         // // freeze the operators who signed adversarially
-        // for (uint i = 0; i < allOperatorInfo[i].length; i++) {
+        // for (uint i = 0; i < allOperatorInfo.length; i++) {
         //     // first for loop iterate over quorums
 
         //     for (uint j = 0; j < allOperatorInfo[i].length; j++) {
@@ -324,7 +324,7 @@ contract NewsletterPromptTaskManager is
         // the task response has been challenged successfully
         taskSuccesfullyChallenged[referenceTaskIndex] = true;
 
-        emit TaskChallengedSuccessfully(taskIndex, msg.sender);
+        emit TaskChallengedSuccessfully(referenceTaskIndex, msg.sender);
     }
 
     function getTaskResponseWindowBlock() external view returns (uint32) {

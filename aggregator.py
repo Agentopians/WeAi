@@ -1,3 +1,4 @@
+// aggregator.py
 import os
 import logging
 import json
@@ -127,7 +128,7 @@ class Aggregator:
     #     )
     #     receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
     #     event = self.task_manager.events.NewTaskCreated().process_log(receipt['logs'][0])
-
+    #
     #     task_index = event['args']['taskIndex']
     #     logger.info(f"Successfully sent the new task {task_index}")
     #     self.bls_aggregation_service.initialize_new_task(
@@ -214,8 +215,9 @@ class Aggregator:
             address=service_manager_address, abi=service_manager_abi
         )
 
+        # UPDATED FUNCTION CALL: use newsletterPromptTaskManager() instead of incredibleSquaringTaskManager()
         task_manager_address = (
-            service_manager.functions.incredibleSquaringTaskManager().call()
+            service_manager.functions.newsletterPromptTaskManager().call()
         )
         with open("abis/NewsletterPromptTaskManager.json") as f:
             task_manager_abi = f.read()

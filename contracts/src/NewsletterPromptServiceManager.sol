@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "@eigenlayer/contracts/libraries/BytesLib.sol";
-import "./IIncredibleSquaringTaskManager.sol";
+import "./INewsletterPromptTaskManager.sol";
 import "@eigenlayer-middleware/src/ServiceManagerBase.sol";
 
 /**
@@ -12,7 +12,7 @@ import "@eigenlayer-middleware/src/ServiceManagerBase.sol";
 contract IncredibleSquaringServiceManager is ServiceManagerBase {
     using BytesLib for bytes;
 
-    IIncredibleSquaringTaskManager
+    IINewsletterPromptTaskManager
         public immutable incredibleSquaringTaskManager;
 
     /// @notice when applied to a function, ensures that the function is only callable by the `registryCoordinator`.
@@ -28,7 +28,7 @@ contract IncredibleSquaringServiceManager is ServiceManagerBase {
         IAVSDirectory _avsDirectory,
         IRegistryCoordinator _registryCoordinator,
         IStakeRegistry _stakeRegistry,
-        IIncredibleSquaringTaskManager _incredibleSquaringTaskManager
+        IINewsletterPromptTaskManager _incredibleSquaringTaskManager
     )
         ServiceManagerBase(
             _avsDirectory,

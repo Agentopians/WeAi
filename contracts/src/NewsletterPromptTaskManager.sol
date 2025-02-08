@@ -10,7 +10,7 @@ import {RegistryCoordinator} from "@eigenlayer-middleware/src/RegistryCoordinato
 import {BLSSignatureChecker, IRegistryCoordinator} from "@eigenlayer-middleware/src/BLSSignatureChecker.sol";
 import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
-import "./IIncredibleSquaringTaskManager.sol";
+import "./INewsletterPromptTaskManager.sol";
 
 contract IncredibleSquaringTaskManager is
     Initializable,
@@ -18,7 +18,7 @@ contract IncredibleSquaringTaskManager is
     Pausable,
     BLSSignatureChecker,
     OperatorStateRetriever,
-    IIncredibleSquaringTaskManager
+    IINewsletterPromptTaskManager
 {
     using BN254 for BN254.G1Point;
 

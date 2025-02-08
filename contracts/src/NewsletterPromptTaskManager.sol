@@ -12,7 +12,7 @@ import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRe
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
 import "./INewsletterPromptTaskManager.sol";
 
-contract IncredibleSquaringTaskManager is
+contract NewsletterPromptTaskManager is
     Initializable,
     OwnableUpgradeable,
     Pausable,
@@ -23,10 +23,6 @@ contract IncredibleSquaringTaskManager is
     using BN254 for BN254.G1Point;
 
     /* CONSTANT */
-    // Enum representing the type of task
-    enum TaskType {
-        VerifyManagerInstructions
-    }
     // The number of blocks from the task initialization within which the aggregator has to respond to
     uint32 public immutable TASK_RESPONSE_WINDOW_BLOCK;
     uint32 public constant TASK_CHALLENGE_WINDOW_BLOCK = 100;
@@ -36,16 +32,6 @@ contract IncredibleSquaringTaskManager is
     // The latest task index
     uint32 public latestTaskNum;
 
-    // Define the Task struct
-    struct Task {
-        TaskType taskType;
-        string agentPrompt;
-        uint32 taskCreatedBlock;
-        bytes quorumNumbers;
-        uint32 quorumThresholdPercentage;
-    } // <- Close the struct here!
-
-    // Now, declare these state variables separately:
     // and responses need to pass the actual task,
     // which is hashed onchain and checked against this mapping
     // mapping of task indices to all task hashes
@@ -102,7 +88,7 @@ contract IncredibleSquaringTaskManager is
         bytes calldata quorumNumbers
     ) external onlyTaskGenerator {
         // create a new task struct
-        Task memory newTask;
+        INewsletterPromptTaskManager.Task memory newTask;
         newTask.taskType = _taskType;
         newTask.agentPrompt = agentPrompt;
         newTask.taskCreatedBlock = uint32(block.number);

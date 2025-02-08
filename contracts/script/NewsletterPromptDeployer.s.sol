@@ -388,7 +388,7 @@ contract NewsletterPromptDeployer is Script, Utils {
                 newsletterPromptPauserReg,
                 newsletterPromptCommunityMultisig,
                 AGGREGATOR_ADDR,
-                TASK_GENERATOR_ADDR
+                AGGREGATOR_ADDR
             )
         );
 

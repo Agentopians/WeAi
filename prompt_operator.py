@@ -138,7 +138,7 @@ class PromptOperator: # Class name is now PromptOperator
         web3 = Web3(Web3.HTTPProvider(self.config["eth_rpc_url"]))
 
         service_manager_address = self.clients.avs_registry_writer.service_manager_addr
-        with open("abis/IncredibleSquaringServiceManager.json") as f:
+        with open("abis/NewsletterPromptServiceManager.json") as f:
             service_manager_abi = f.read()
         service_manager = web3.eth.contract(
             address=service_manager_address, abi=service_manager_abi
@@ -147,7 +147,7 @@ class PromptOperator: # Class name is now PromptOperator
         task_manager_address = (
             service_manager.functions.incredibleSquaringTaskManager().call()
         )
-        with open("abis/IncredibleSquaringTaskManager.json") as f:
+        with open("abis/NewsletterPromptTaskManager.json") as f:
             task_manager_abi = f.read()
         self.task_manager = web3.eth.contract(address=task_manager_address, abi=task_manager_abi)
 

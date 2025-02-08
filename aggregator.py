@@ -81,9 +81,14 @@ class Aggregator:
             signed_tx.raw_transaction
         )
         receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
-        event = self.task_manager.events.NewTaskCreated().process_log(receipt['logs'][0])
 
-        task_index = event['args']['taskIndex']
+        if not receipt['logs']: # CHECK: if logs are empty
+            logger.warning("No logs emitted in transaction receipt. Falling back to inferring task index.")
+            task_index = self.task_manager.functions.latestTaskNum().call() # Fallback: Infer task index
+        else:
+            event = self.task_manager.events.NewTaskCreated().process_log(receipt['logs'][0])
+            task_index = event['args']['taskIndex']
+
         logger.info(f"Successfully sent Manager Instructions Verification Task {task_index}")
         self.bls_aggregation_service.initialize_new_task(
             task_index=task_index,
@@ -179,7 +184,7 @@ class Aggregator:
                 signed_tx.raw_transaction
             )
             receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
-            
+
 
     def __load_ecdsa_key(self):
         ecdsa_key_password = os.environ.get("AGGREGATOR_ECDSA_KEY_PASSWORD", "")
@@ -229,8 +234,8 @@ class Aggregator:
         )
         def hasher(task):
             encoded = eth_abi.encode(["uint32", "string"], [task["task_index"], task["number_squared"]])
-            return Web3.keccak(encoded) 
-        
+            return Web3.keccak(encoded)
+
         self.bls_aggregation_service = BlsAggregationService(avs_registry_service, hasher)
 
 if __name__ == '__main__':

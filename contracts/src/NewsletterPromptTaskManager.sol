@@ -97,7 +97,7 @@ contract NewsletterPromptTaskManager is
 
         // store hash of task onchain, emit event, and increase taskNum
         allTaskHashes[latestTaskNum] = keccak256(abi.encode(newTask));
-        emit NewTaskCreated(latestTaskNum, newTask);
+        emit NewTaskCreated(latestTaskNum, newTask); // NOTE: emitting the Task struct
         latestTaskNum = latestTaskNum + 1;
     }
 

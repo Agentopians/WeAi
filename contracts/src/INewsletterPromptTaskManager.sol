@@ -11,7 +11,7 @@ interface INewsletterPromptTaskManager {
     }
 
     // EVENTS
-    event NewTaskCreated(uint32 indexed taskIndex, Task task); // NOTE: updated to emit the Task struct
+    event NewTaskCreated(uint32 indexed taskIndex, Task task); // NOTE: emitting the Task struct
 
     event TaskResponded(
         TaskResponse taskResponse,

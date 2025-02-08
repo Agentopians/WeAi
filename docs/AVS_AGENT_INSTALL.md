@@ -62,10 +62,12 @@ Start the aggregator in a separate terminal:
 make start-aggregator
 ```
 
-Set your OpenAI API Key in another terminal:
+**Set your OpenAI API Key:**
 
+Add your OpenAI API key to `.env` file:
 ```bash
-export OPENAI_API_KEY=sk-mysecretapikey
+cp .env.example .env
+echo "OPENAI_API_KEY=sk-mysecretapikey" >> .env
 ```
 
 Register the operator with eigenlayer and incredible-squaring, and then start the process:

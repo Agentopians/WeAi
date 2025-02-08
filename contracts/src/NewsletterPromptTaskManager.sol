@@ -36,21 +36,26 @@ contract IncredibleSquaringTaskManager is
     // The latest task index
     uint32 public latestTaskNum;
 
-    // mapping of task indices to all tasks hashes
+    // Define the Task struct
     struct Task {
         TaskType taskType;
         string agentPrompt;
         uint32 taskCreatedBlock;
         bytes quorumNumbers;
         uint32 quorumThresholdPercentage;
-    // when a task is created, task hash is stored here,
+    } // <- Close the struct here!
+
+    // Now, declare these state variables separately:
     // and responses need to pass the actual task,
     // which is hashed onchain and checked against this mapping
+    // mapping of task indices to all task hashes
     mapping(uint32 => bytes32) public allTaskHashes;
 
     // mapping of task indices to hash of abi.encode(taskResponse, taskResponseMetadata)
+    // mapping of task indices to hash of abi.encode(taskResponse, taskResponseMetadata)
     mapping(uint32 => bytes32) public allTaskResponses;
 
+    // mapping of task indices to a flag for whether a task has been successfully challenged
     mapping(uint32 => bool) public taskSuccesfullyChallenged;
 
     address public aggregator;

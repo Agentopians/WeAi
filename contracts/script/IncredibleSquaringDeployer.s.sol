@@ -18,9 +18,9 @@ import {IndexRegistry} from "@eigenlayer-middleware/src/IndexRegistry.sol";
 import {StakeRegistry} from "@eigenlayer-middleware/src/StakeRegistry.sol";
 import "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
 
-import {IncredibleSquaringServiceManager, IServiceManager} from "../src/IncredibleSquaringServiceManager.sol";
-import {IncredibleSquaringTaskManager} from "../src/IncredibleSquaringTaskManager.sol";
-import {IIncredibleSquaringTaskManager} from "../src/IIncredibleSquaringTaskManager.sol";
+import {NewsletterPromptServiceManager, IServiceManager} from "../src/NewsletterPromptServiceManager.sol";
+import {NewsletterPromptTaskManager} from "../src/NewsletterPromptTaskManager.sol";
+import {INewsletterPromptTaskManager} from "../src/INewsletterPromptTaskManager.sol";
 import "../src/ERC20Mock.sol";
 
 import {Utils} from "./utils/Utils.sol";
@@ -66,12 +66,12 @@ contract IncredibleSquaringDeployer is Script, Utils {
 
     OperatorStateRetriever public operatorStateRetriever;
 
-    IncredibleSquaringServiceManager public incredibleSquaringServiceManager;
+    NewsletterPromptServiceManager public newsletterPromptServiceManager;
     IServiceManager public incredibleSquaringServiceManagerImplementation;
 
-    IncredibleSquaringTaskManager public incredibleSquaringTaskManager;
-    IIncredibleSquaringTaskManager
-        public incredibleSquaringTaskManagerImplementation;
+    NewsletterPromptTaskManager public newsletterPromptTaskManager;
+    INewsletterPromptTaskManager
+        public newsletterPromptTaskManagerImplementation;
 
     function run() external {
         // Eigenlayer contracts
@@ -203,7 +203,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
          * First, deploy upgradeable proxy contracts that **will point** to the implementations. Since the implementation contracts are
          * not yet deployed, we give these proxies an empty contract as the initial implementation, to act as if they have no code.
          */
-        incredibleSquaringServiceManager = IncredibleSquaringServiceManager(
+        newsletterPromptServiceManager = NewsletterPromptServiceManager(
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
@@ -212,7 +212,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
                 )
             )
         );
-        incredibleSquaringTaskManager = IncredibleSquaringTaskManager(
+        newsletterPromptTaskManager = NewsletterPromptTaskManager(
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
@@ -292,7 +292,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
         }
 
         registryCoordinatorImplementation = new regcoord.RegistryCoordinator(
-            incredibleSquaringServiceManager,
+            newsletterPromptServiceManager,
             regcoord.IStakeRegistry(address(stakeRegistry)),
             regcoord.IBLSApkRegistry(address(blsApkRegistry)),
             regcoord.IIndexRegistry(address(indexRegistry))
@@ -358,21 +358,21 @@ contract IncredibleSquaringDeployer is Script, Utils {
             );
         }
 
-        incredibleSquaringServiceManagerImplementation = new IncredibleSquaringServiceManager(
+        incredibleSquaringServiceManagerImplementation = new NewsletterPromptServiceManager(
             avsDirectory,
             registryCoordinator,
             stakeRegistry,
-            incredibleSquaringTaskManager
+            newsletterPromptTaskManager
         );
         // Third, upgrade the proxy contracts to use the correct implementation contracts and initialize them.
         incredibleSquaringProxyAdmin.upgrade(
             TransparentUpgradeableProxy(
-                payable(address(incredibleSquaringServiceManager))
+                payable(address(newsletterPromptServiceManager))
             ),
             address(incredibleSquaringServiceManagerImplementation)
         );
 
-        incredibleSquaringTaskManagerImplementation = new IncredibleSquaringTaskManager(
+        newsletterPromptTaskManagerImplementation = new NewsletterPromptTaskManager(
             registryCoordinator,
             TASK_RESPONSE_WINDOW_BLOCK
         );
@@ -380,11 +380,11 @@ contract IncredibleSquaringDeployer is Script, Utils {
         // Third, upgrade the proxy contracts to use the correct implementation contracts and initialize them.
         incredibleSquaringProxyAdmin.upgradeAndCall(
             TransparentUpgradeableProxy(
-                payable(address(incredibleSquaringTaskManager))
+                payable(address(newsletterPromptTaskManager))
             ),
-            address(incredibleSquaringTaskManagerImplementation),
+            address(newsletterPromptTaskManagerImplementation),
             abi.encodeWithSelector(
-                incredibleSquaringTaskManager.initialize.selector,
+                newsletterPromptTaskManager.initialize.selector,
                 incredibleSquaringPauserReg,
                 incredibleSquaringCommunityMultisig,
                 AGGREGATOR_ADDR,
@@ -408,8 +408,8 @@ contract IncredibleSquaringDeployer is Script, Utils {
         );
         vm.serializeAddress(
             deployed_addresses,
-            "credibleSquaringServiceManager",
-            address(incredibleSquaringServiceManager)
+            "newsletterPromptServiceManager",
+            address(newsletterPromptServiceManager)
         );
         vm.serializeAddress(
             deployed_addresses,
@@ -418,13 +418,13 @@ contract IncredibleSquaringDeployer is Script, Utils {
         );
         vm.serializeAddress(
             deployed_addresses,
-            "credibleSquaringTaskManager",
-            address(incredibleSquaringTaskManager)
+            "newsletterPromptTaskManager",
+            address(newsletterPromptTaskManager)
         );
         vm.serializeAddress(
             deployed_addresses,
-            "credibleSquaringTaskManagerImplementation",
-            address(incredibleSquaringTaskManagerImplementation)
+            "newsletterPromptTaskManagerImplementation",
+            address(newsletterPromptTaskManagerImplementation)
         );
         vm.serializeAddress(
             deployed_addresses,
@@ -449,6 +449,6 @@ contract IncredibleSquaringDeployer is Script, Utils {
             deployed_addresses_output
         );
 
-        writeOutput(finalJson, "credible_squaring_avs_deployment_output");
+        writeOutput(finalJson, "newsletter_prompt_avs_deployment_output");
     }
 }

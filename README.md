@@ -28,21 +28,11 @@ Our system uses a multi-agent architecture where specialized AI agents handle di
 - Python 3.9+
 - Docker
 - Access to required APIs (details in technical documentation)
+- [Foundry](https://book.getfoundry.sh/getting-started/installation)
 
 ### Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/week-in-ethereum-news-ai.git
-cd week-in-ethereum-news-ai
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys and configuration
-```
+For detailed installation instructions for both the AVS and the Agents, please refer to [docs/AVS_AGENT_INSTALL.md](docs/AVS_AGENT_INSTALL.md).
 
 ## Documentation
 

@@ -11,6 +11,7 @@ import {BLSSignatureChecker, IRegistryCoordinator} from "@eigenlayer-middleware/
 import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
 import "./INewsletterPromptTaskManager.sol";
+import "forge-std/console.sol"; // ADDED IMPORT
 
 contract NewsletterPromptTaskManager is
     Initializable,
@@ -87,6 +88,13 @@ contract NewsletterPromptTaskManager is
         uint32 quorumThresholdPercentage,
         bytes calldata quorumNumbers
     ) external {
+        console.log("createNewTask called"); // ADDED LOGGING
+        console.log("  msg.sender:", msg.sender); // ADDED LOGGING
+        console.log("  _taskType:", uint256(_taskType)); // ADDED LOGGING
+        console.log("  agentPrompt:", agentPrompt); // ADDED LOGGING
+        console.log("  quorumThresholdPercentage:", quorumThresholdPercentage); // ADDED LOGGING
+        console.log("  quorumNumbers:", quorumNumbers); // ADDED LOGGING
+
         // create a new task struct
         INewsletterPromptTaskManager.Task memory newTask;
         newTask.taskType = _taskType;
@@ -266,7 +274,7 @@ contract NewsletterPromptTaskManager is
         //     task.taskCreatedBlock
         // );
         // // freeze the operators who signed adversarially
-        // for (uint i = 0; i < allOperatorInfo.length; i++) {
+        // for (uint i = 0; i < allOperatorInfo[i].length; i++) {
         //     // first for loop iterate over quorums
 
         //     for (uint j = 0; j < allOperatorInfo[i].length; j++) {
@@ -316,7 +324,7 @@ contract NewsletterPromptTaskManager is
         // the task response has been challenged successfully
         taskSuccesfullyChallenged[referenceTaskIndex] = true;
 
-        emit TaskChallengedSuccessfully(referenceTaskIndex, msg.sender);
+        emit TaskChallengedSuccessfully(taskIndex, msg.sender);
     }
 
     function getTaskResponseWindowBlock() external view returns (uint32) {

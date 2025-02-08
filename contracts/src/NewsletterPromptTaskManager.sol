@@ -1,6 +1,6 @@
  // SPDX-License-Identifier: UNLICENSED
  pragma solidity ^0.8.9;
- 
+
  import "@openzeppelin-upgrades/contracts/proxy/utils/Initializable.sol";
  import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
  import "@eigenlayer/contracts/permissions/Pausable.sol";
@@ -57,6 +57,9 @@
      // onlyTaskGenerator is used to restrict createNewTask from only being called by a permissioned entity
      // in a real world scenario, this would be removed by instead making createNewTask a payable function
      modifier onlyTaskGenerator() {
+         console.log("onlyTaskGenerator modifier called"); // ADDED LOGGING
+         console.log("  msg.sender:", msg.sender);       // ADDED LOGGING
+         console.log("  generator address:", generator); // ADDED LOGGING
          require(msg.sender == generator, "Task generator must be the caller");
          _;
      }
@@ -87,7 +90,7 @@
          string memory agentPrompt,
          uint32 quorumThresholdPercentage,
          bytes calldata quorumNumbers
-     ) external {
+     ) external onlyTaskGenerator {
          console.log("createNewTask called"); // ADDED LOGGING
          console.log("  msg.sender:", msg.sender); // ADDED LOGGING
          console.log("  _taskType:", uint256(_taskType)); // ADDED LOGGING

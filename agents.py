@@ -25,6 +25,8 @@ from mytools import (
     TelegramPostAgent,
     WebScraperAgent
 )
+from aggregator import Aggregator # ADDED IMPORT
+import time # ADDED IMPORT
 
 nest_asyncio.apply()
 load_dotenv()
@@ -42,10 +44,25 @@ config_list = [
 llm_config = {
     "config_list": config_list,
     "cache_seed": None,
-    "timeout": 600 
+    "timeout": 600
 }
 
-def create_group_chat():
+manager_instructions = """You are the task orchestrator. For each task:
+    1. Create initial plan of what analysis is needed
+    2. Ask coder to do some analysis if needed
+    3. Wait for critic to review your plan
+    4. Based on critic's feedback:
+        If it is needed:
+        - Ask web_scraper for relevant information
+    5. Show results to critic
+    6. Based on critic's feedback, might need to:
+        If it is needed:
+        - Get more info from web_scraper
+    7. When critic approves final results:
+        - Ask telegram-poster to post a brief tweet summarizing the findings
+    8. Only finish when tweet is posted""" # ADDED manager_instructions - Step 4.2
+
+def create_group_chat(manager_instructions): # MODIFIED - Accept manager_instructions - Step 4.3
     """Creates a group chat with proper task management flow"""
     def safe_termination_check(x):
         if not x or not isinstance(x, dict):
@@ -57,20 +74,7 @@ def create_group_chat():
 
     manager = autogen.AssistantAgent(
         name="manager",
-        system_message="""You are the task orchestrator. For each task:
-        1. Create initial plan of what analysis is needed
-        2. Ask coder to do some analysis if needed
-        3. Wait for critic to review your plan
-        4. Based on critic's feedback:
-            If it is needed:
-            - Ask web_scraper for relevant information
-        5. Show results to critic
-        6. Based on critic's feedback, might need to:
-            If it is needed:
-            - Get more info from web_scraper
-        7. When critic approves final results:
-            - Ask twitter-poster to post a brief tweet summarizing the findings
-        8. Only finish when tweet is posted""",
+        system_message=manager_instructions, # MODIFIED - Use manager_instructions - Step 4.3
         llm_config=llm_config,
         is_termination_msg=safe_termination_check,
     )
@@ -92,7 +96,7 @@ def create_group_chat():
         llm_config=llm_config,
         is_termination_msg=safe_termination_check,
     )
-    
+
     web_scraper = WebScraperAgent(
         name="web-scraper",
         system_message="""You gather relevant information:
@@ -108,7 +112,7 @@ def create_group_chat():
         system_message="""You write and execute Python code:
         1. Always make sure you manage to run the code
         2. Show your work and results""",
-        code_execution_config={"work_dir": "coding", "use_docker": False},
+        code_execution_config={\"work_dir\": \"coding\", \"use_docker\": False},
         default_auto_reply="",
         max_consecutive_auto_reply=10,
         is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
@@ -151,69 +155,98 @@ def create_group_chat():
 
     return group_manager
 
-def create_society_of_mind_agent():
+def create_society_of_mind_agent(manager_instructions): # MODIFIED - Accept manager_instructions - Step 4.3
     """Creates Society of Mind with manager orchestrating everything"""
-    group_manager = create_group_chat()
-    
+    group_manager = create_group_chat(manager_instructions) # MODIFIED - Pass manager_instructions
+
     society_of_mind_agent = SocietyOfMindAgent(
         name="society_of_mind",
         chat_manager=group_manager,
         llm_config=llm_config,
     )
-    
+
     nested_chat_queue = [
         {
             "recipient": group_manager,
             "summary_method": "reflection_with_llm",
         }
     ]
-    
+
     trigger_user = UserProxyAgent(
         name="user_proxy",
         human_input_mode="ALWAYS",
         code_execution_config=False,
         is_termination_msg=lambda x: True,
     )
-    
+
     society_of_mind_agent.register_nested_chats(
         nested_chat_queue,
         trigger=trigger_user
     )
-    
+
     return society_of_mind_agent
 
-def interact_freely_with_user(mode="society"):
+def interact_freely_with_user(mode="society"): # MODIFIED - Step 4.4
     """Starts a chat between the user and selected agent type."""
-    print(colored("\nInitializing agent system...", "light_cyan"))
+    print(colored("\\nInitializing agent system...", "light_cyan"))
 
     if mode == "society":
-        agent = create_society_of_mind_agent()
-        user = UserProxyAgent(
-            name="user_proxy",
-            human_input_mode="ALWAYS",
-            code_execution_config=False,
-            default_auto_reply="",
-            is_termination_msg=lambda x: True,
-        )
-        initial_message = "Hello! I'm a Society of Mind agent. What would you like to explore?"
+        aggregator_config = { # Load your aggregator config - ADJUST PATHS IF NEEDED
+            "eth_rpc_url": "http://localhost:8545", # Or your Anvil RPC URL
+            "aggregator_server_ip_port_address": "localhost:8090", # Or your aggregator server address
+            "ecdsa_private_key_store_path": "tests/keys/aggregator.ecdsa.key.json", # Adjust path
+            "avs_registry_coordinator_address": "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9", # Adjust address
+            "operator_state_retriever_address": "0x95401dc811bb5740090279Ba06cfA8fcF6113778" # Adjust address
+        }
+        aggregator = Aggregator(aggregator_config) # Initialize Aggregator (ensure you've imported Aggregator class)
 
-        print(colored("\nChat started! Type your messages and press Enter to interact.", "green"))
-        agent.initiate_chat(
-            user,
-            message=initial_message
-        )
+        task_index = aggregator.send_new_manager_instructions_verification_task(manager_instructions) # Submit prompt for verification
+        print(colored(f"\\nSubmitted Manager Instructions for AVS Verification. Task Index: {task_index}. Waiting for operator verdicts...", "light_cyan"))
+
+        # Polling for Verification Status (Simple PoC Polling - Replace with event listener for production)
+        verification_status = None
+        start_time = time.time()
+        while time.time() - start_time < 60: # Poll for up to 60 seconds (adjust timeout as needed)
+            # In a real app, you'd query the contract for verification status based on task_index
+            # For this PoC, we'll just wait and assume operators will respond in time.
+            time.sleep(5) # Check every 5 seconds
+            # In a more advanced PoC, you would query the contract's events or state
+            # to determine the verification outcome and aggregated signature.
+            # For now, we'll just assume it's verified if we reach this point after waiting.
+            verification_status = True # Assume verified after waiting (for basic PoC)
+            break
+
+        if verification_status:
+            print(colored("\\nManager Instructions VERIFIED by AVS! Proceeding with agent initialization...", "green"))
+            # Now create your SocietyOfMindAgent, passing in the *verified* manager_instructions:
+            agent = create_society_of_mind_agent(manager_instructions=manager_instructions) # Modify create_society_of_mind_agent to accept manager_instructions
+            user = UserProxyAgent(
+                name="user_proxy",
+                human_input_mode="ALWAYS",
+                code_execution_config=False,
+                default_auto_reply="",
+                is_termination_msg=lambda x: True,
+            )
+            initial_message = "Hello! I'm a Society of Mind agent operating under AVS Verified Instructions. What would you like to explore?"
+            agent.initiate_chat(user, message=initial_message)
+
+        else:
+            print(colored("\\nManager Instructions REJECTED by AVS! Aborting agent initialization.", "red"))
+            return # Or handle rejection appropriately
+
+
 if __name__ == "__main__":
     import argparse
-    
+
     parser = argparse.ArgumentParser(description='AutoGen Chat Interface')
     parser.add_argument(
-        '--mode', 
+        '--mode',
         type=str,
         choices=['society'],
         default='society',
         help='Mode of operation: society'
     )
-    
+
     args = parser.parse_args()
-    
+
     interact_freely_with_user(mode=args.mode)

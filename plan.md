@@ -1,127 +1,143 @@
 # Project Implementation Plan: Verifiable Agent Prompts with Agentic Operators
+*(Revised Version - Smart Contracts Unchanged)*
 
-This document outlines a detailed, step-by-step guide to implement our PoC for verifiable agent prompts using EigenLayer AVS. The goal is to ensure that the AI-driven Ethereum newsletter generation agent (the “manager” agent) only executes when its governing prompt has been automatically verified by a network of agentic operators through an AVS. This plan is divided into several phases with clear tasks for each component.
+This document provides a step-by-step plan to implement a Proof of Concept (PoC) for verifiable agent prompts using EigenLayer Autonomous Verifiable Services (AVS). The goal is to ensure that an AI-driven newsletter generation agent ("manager" agent) operates only after its instructions (prompt) have been verifiably reviewed and approved by a network of agentic operators.
 
----
-
-## Phase 1: Solidity Contract Modifications
-
-### 1.1 Rename Contracts
-- **Action:** Rename the existing contracts to reflect the new use case.
-  - Rename `contracts/src/IncredibleSquaringTaskManager.sol` to `contracts/src/NewsletterPromptTaskManager.sol`.
-  - (Optionally, update service manager file similarly if applicable.)
-
-### 1.2 Update Task Struct and Enum
-- **Objective:** Recast the definition of a “task” so that it stores an agent prompt.
-- **Changes:**
-  - In the `Task` struct, remove (or comment out) the numeric field (e.g., `numberToBeSquared`), and add a new field:
-    - `string agentPrompt;`
-  - Modify the existing `enum` (or introduce one) to include a new type:
-    - `enum TaskType { VerifyManagerInstructions, ... }`
-  - Ensure the `createNewTask` function uses these new parameters:
-    - Change its parameters to accept:
-      - `TaskType _taskType,`
-      - `string memory agentPrompt,`
-      - and the other fields (quorumNumbers, quorumThresholdPercentage) remain.
-
-### 1.3 Update Event Definitions (Optional)
-- **Objective:** Enhance event clarity by including task type and prompt.
-- **Changes:**
-  - Update the event `NewTaskCreated` so that it now emits the Task struct that includes `taskType` and `agentPrompt`.
-  - Optionally add events such as `PromptVerified` and `PromptRejected` for clarity.
+**Important Note:** Due to recent issues and time constraints, we will *not* modify the existing Solidity smart contracts. Instead, we will repurpose the existing contract structure and fields to simulate prompt verification. This means we will focus our changes on the off-chain components: `aggregator.py`, `prompt_operator.py` (formerly `squaring_operator.py`), and `agents.py`.
 
 ---
 
-## Phase 2: Aggregator Modifications (aggregator.py)
+## Phase 1: Smart Contract Context (No Code Changes)
 
-### 2.1 Add New Function for Prompt Verification Task
-- **Objective:** Create a function to submit a “Verify Manager Instructions” task.
-- **Action:** Implement `send_new_manager_instructions_verification_task(agent_prompt)` with:
-  - `task_type` set to 0 (assuming `VerifyManagerInstructions` is index 0).
-  - Pass the `agent_prompt` (string) instead of a number.
-  - Use existing quorum settings (e.g., `nums_to_bytes([0])`, quorumThresholdPercentage as 100).
+Since we are *not* changing the smart contracts, understand the following:
 
-### 2.2 Adapt Signature Submission and Aggregation 
-- **Objective:** Ensure that responses handling now interpret the verification status as boolean, rather than a computed number.
-- **Action:** Check (and if needed adjust) the `submit_signature` function to accept the verification data structure (even if minimal changes are needed for the PoC).
+- **Field Repurposing:**
+    - The `numberToBeSquared` field in the `IncredibleSquaringTaskManager.sol` contract will now be used to represent a *fingerprint* of the agent prompt (e.g., a hash or numeric representation).
+    - On-chain tasks and events will remain as they are defined in the original contracts. We will interpret their data differently in our off-chain code.
+
+- **Rationale:** This approach minimizes risk and development time for this PoC while still demonstrating the core concept of verifiable agent prompts.
+
+- **Future Consideration:** For a production system, modifying the smart contracts to explicitly support prompts and task types would be beneficial for clarity and correctness.
+
+---
+
+## Phase 2: Aggregator Modifications (`aggregator.py`)
+
+### 2.1 Implement `send_new_manager_instructions_verification_task` Function
+
+- **Objective:** Create a new function to submit a prompt verification task to the AVS using the existing `createNewTask` contract function.
+- **Action:** Add a function `send_new_manager_instructions_verification_task(agent_prompt)` to `aggregator.py`.
+    - Inside this function:
+        - Define `task_type = 0` (representing "Verify Manager Instructions").
+        - Convert the `agent_prompt` string into a numeric fingerprint. For example, you can:
+            - Calculate the keccak256 hash of the `agent_prompt`.
+            - Convert a portion of this hash into a `uint256` value.
+        - Call the existing `createNewTask` function of the smart contract, passing:
+            - The numeric fingerprint of the `agent_prompt` as the `numberToBeSquared` parameter.
+            - Standard quorum parameters (e.g., `quorumThresholdPercentage = 100`, `quorumNumbers = nums_to_bytes([0])`).
+    - **Note:** Document that this numeric value is *not* a number to be squared, but a representation of the agent prompt for verification.
+
+### 2.2 Adapt Signature Handling
+
+- **Objective:** Modify the aggregator to interpret operator responses as boolean verification verdicts (approve/reject) instead of squared numbers.
+- **Action:** In functions like `submit_signature` and any response aggregation logic:
+    - Update comments and variable names to reflect that the expected response is now a verification status (e.g., `verification_status` instead of `squared_number`).
+    - Adjust any logging or processing steps to handle boolean verdicts.
 
 ### 2.3 Remove Unused Functions
-- **Objective:** Disable functions used solely for the squaring example.
-- **Action:** Comment out or remove `start_sending_new_tasks` and `send_new_task`.
+
+- **Objective:** Remove or comment out functions related to the original squaring task, to simplify the code and avoid confusion.
+- **Action:** Comment out or remove functions like `start_sending_new_tasks` and `send_new_task`.
 
 ---
 
-## Phase 3: Operator Verification Agent Modifications (squaring_operator.py → prompt_operator.py)
+## Phase 3: Operator Modifications (`prompt_operator.py` - renamed from `squaring_operator.py`)
 
 ### 3.1 Rename File and Class
-- **Action:** Rename `squaring_operator.py` to `prompt_operator.py`.
-- **Action:** Inside the file, change the class name from `SquaringOperator` to `PromptOperator`.
 
-### 3.2 Update process_task_event Implementation
-- **Objective:** Repurpose the operator’s logic from performing squaring to verifying an agent prompt.
-- **Action:** Replace the content of the `process_task_event` function as follows:
-  - Retrieve `task_id`, `task_type`, and `agent_prompt` from the event.
-  - For `task_type == 0` (i.e. VerifyManagerInstructions):
-    - Log the agent prompt to the console.
-    - **Automated Policy Check Placeholder:**  
-      For the PoC, you may start with a manual check (using `input()`), but the aim is to later replace this with policy-based automated checks.
-      - Example: Use code to check if prompt length is acceptable and required keywords are present.
-    - Set `verification_status` to `True` if approved or `False` if rejected.
-    - Encode `[task_id, verification_status]` using `eth_abi.encode()`, compute the hash, sign it using the operator's BLS key.
-    - Submit the signed verification verdict to the aggregator via a POST request.
+- **Action:**
+    - Rename the file `squaring_operator.py` to `prompt_operator.py`.
+    - Rename the class `SquaringOperator` to `PromptOperator` within the file.
 
----
+### 3.2 Implement Prompt Verification Logic in `process_task_event`
 
-## Phase 4: Autogen Workflow Integration (agents.py)
-
-### 4.1 Define Manager Instructions
-- **Action:** In `agents.py`, add a variable `manager_instructions` containing the detailed instructions for the `manager` agent. This text should describe how the agent should orchestrate tasks for newsletter generation.
-
-### 4.2 Update create_society_of_mind_agent
-- **Action:** Modify the function `create_society_of_mind_agent` to accept a parameter `manager_instructions` and pass that as the `system_message` when instantiating the `manager` agent.
-
-### 4.3 Modify interact_freely_with_user to Integrate AVS Verification Flow
-- **Action:** In `agents.py`, update the `interact_freely_with_user` function as follows:
-  - Before initializing the SocietyOfMindAgent, instantiate the `Aggregator` and submit the manager instructions for AVS verification by calling `aggregator.send_new_manager_instructions_verification_task(manager_instructions)`.
-  - Implement a simple polling mechanism (e.g., sleep and loop for up to 60 seconds) to wait for the verification outcome.
-  - If the prompt is verified, proceed to initialize the SocietyOfMindAgent with the verified instructions; if not, abort the process or log an appropriate message.
+- **Objective:** Change the operator's behavior to verify agent prompts based on predefined policies instead of performing squaring calculations.
+- **Action:** Modify the `process_task_event` function in `prompt_operator.py`:
+    - Retrieve `task_id` and the `numberToBeSquared` value from the task event.
+    - Reinterpret `numberToBeSquared` as the numeric fingerprint of the `agent_prompt`. You might need to reverse the fingerprinting process (if feasible) or simply acknowledge that the operator receives a fingerprint representing the prompt.
+    - **Automated Policy Checks:** Implement automated checks to evaluate the `agent_prompt` (or its fingerprint) against predefined policies. Examples of policies for this PoC:
+        - **Prompt Length:** Check if the prompt's length is within acceptable limits.
+        - **Keyword Presence:** Verify if the prompt includes essential keywords (e.g., "Ethereum", "newsletter", "DeFi").
+    - **Verification Verdict:** Based on the policy checks, determine a `verification_status`: `True` (approved) if policies are met, `False` (rejected) otherwise. For this PoC, you can start with simple rule-based policies.
+    - **Sign and Submit Verdict:**
+        - Encode `[task_id, verification_status]` using `eth_abi.encode()`.
+        - Sign the encoded data using the operator's BLS key.
+        - Submit the signed verdict to the aggregator via an HTTP POST request (using the existing mechanism).
 
 ---
 
-## Phase 5: Testing and Verification
+## Phase 4: Autogen Workflow Integration (`agents.py`)
 
-### 5.1 Deploy Updated Solidity Contracts
-- **Action:** Compile your Solidity contracts using Foundry:
-  - Run: `make build-contracts`
-- **Action:** Deploy the contracts to your local Anvil chain using your deployment scripts.  
-  **Important:** Update the contract addresses in your configuration files accordingly.
+### 4.1 Define `manager_instructions`
 
-### 5.2 Run Aggregator, Operator, and Agents
-- **Action:** Start `aggregator.py` in one terminal:
-  - Command: `python aggregator.py`
-- **Action:** Start `prompt_operator.py` in another terminal:
-  - Command: `python prompt_operator.py`
-- **Action:** Start `agents.py` in a third terminal with society mode:
-  - Command: `python agents.py --mode society`
-  
-### 5.3 Monitor the Workflow
+- **Action:** In `agents.py`, define a string variable `manager_instructions`. This variable will hold the detailed instructions for the `manager` agent, outlining its role in newsletter generation.
+
+### 4.2 Update `create_society_of_mind_agent`
+
+- **Objective:** Modify the agent creation function to accept and use verified manager instructions.
+- **Action:** Update `create_society_of_mind_agent(manager_instructions)` to:
+    - Accept `manager_instructions` as a parameter.
+    - Set the `system_message` of the `manager` agent to be the provided `manager_instructions`.
+
+### 4.3 Integrate AVS Verification in `interact_freely_with_user`
+
+- **Objective:** Implement the prompt verification workflow before starting agent interactions.
+- **Action:** Modify `interact_freely_with_user` in `agents.py`:
+    - Instantiate the `Aggregator`.
+    - Call `aggregator.send_new_manager_instructions_verification_task(manager_instructions)` to submit the `manager_instructions` for verification.
+    - Implement a polling mechanism (e.g., loop with `time.sleep()`) to wait for the verification outcome from the aggregator.
+    - Check the verification outcome.
+        - If verified (e.g., aggregator indicates success), proceed to create and initialize the `SocietyOfMindAgent` using the `manager_instructions`.
+        - If not verified, log an error message and halt the agent initialization process.
+
+---
+
+## Phase 5: Configuration and Testing
+
+### 5.1 Configuration Files
+
+- **Aggregator Configuration (`config-files/aggregator.yaml`):**
+    - Verify that contract addresses, quorum settings, and key file paths are correctly configured for your environment.
+- **Operator Configuration (e.g., `config-files/operator.anvil.yaml`):**
+    - Ensure blockchain endpoints and operator keys are correctly set.
+
+- **Action:** Double-check all configuration files before running any components.
+
+### 5.2 Run Components
+
+- **Action:** Open separate terminals and start the following in order:
+    1. Aggregator: `python aggregator.py`
+    2. Prompt Operator: `python prompt_operator.py`
+    3. Agents (Society Mode): `python agents.py --mode society`
+
+### 5.3 Workflow Validation
+
 - **Expected Flow:**
-  - `agents.py` submits the manager’s instructions for verification.
-  - `prompt_operator.py` automatically (or via automated checks, if implemented) evaluates the prompt against the verification policies and sends back a signed verdict.
-  - `aggregator.py` aggregates operator responses and the AVS contract records the outcome.
-  - `agents.py` polls for the verification outcome; if verified, it proceeds to initialize the SocietyOfMindAgent and start the group chat.
-- **Action:** Validate the process by checking terminal outputs and on-chain event logs to ensure that prompt verification is successful.
+    1. `agents.py` submits `manager_instructions` for verification via the aggregator.
+    2. Aggregator creates a task on-chain (using the repurposed `numberToBeSquared` field for the prompt fingerprint).
+    3. `prompt_operator.py` receives the task, performs automated policy checks, and submits a signed verification verdict (approve/reject) to the aggregator.
+    4. Aggregator aggregates verdicts.
+    5. `agents.py` polls for the verification outcome. If verified, it initializes the `SocietyOfMindAgent` with the `manager_instructions` and starts the agent interaction.
+
+- **Action:** Monitor terminal outputs and on-chain events to confirm the prompt verification process is working as expected.
 
 ---
 
-## Additional Considerations
+## Additional Notes and Future Steps
 
-- **Future Enhancements:**
-  - Implement fully automated policy-based prompt verification in `prompt_operator.py` to replace manual input.
-  - Expand the AVS to support additional task types (e.g., verifiable tool usage) once the PoC for prompt verification is stable.
-  - Consider introducing operator model diversity for improved robustness once the core system is functional.
+- **PoC Focus:** This PoC prioritizes demonstrating verifiable prompt submission and automated operator verification.
+- **Policy Refinement:** The automated policy checks in `prompt_operator.py` are basic for this PoC. Future iterations can incorporate more sophisticated AI-driven policy evaluations and operator model diversity.
+- **Further Verifiability:** After prompt verification, consider extending verifiability to other aspects, such as agent tool usage and output content.
+- **Smart Contract Evolution:** For a production-ready AVS, revisiting and modifying the smart contracts to natively support prompts and task types is recommended.
 
-- **Time Constraints:**  
-  Given our limited time, the focus for the initial PoC is on prompt verification. Later iterations can incorporate additional verification for tool usage and other aspects.
-
-This document serves as the road map for our implementation. Each phase builds on the previous one, ensuring a phased, manageable development approach toward a fully verifiable, AI-driven newsletter system on EigenLayer.
+This revised `plan.md` provides a comprehensive guide for implementing the Verifiable Agent Prompts PoC, focusing on off-chain modifications and repurposing the existing smart contract infrastructure. Please review it with your team and let me know if you have any questions.

@@ -166,7 +166,7 @@ class Aggregator:
             task_manager_address = service_manager.functions.newsletterPromptTaskManager().call()
             logger.info(f"Task manager address obtained from service manager: {task_manager_address}")
         except Exception as e:
-            logger.error(f"Failed to call newsletterPromptTaskManager(): {e}")
+            logger.warning(f"Failed to call newsletterPromptTaskManager(): {e}")
             fallback_address = self.config.get("newsletter_prompt_task_manager_address")
             if fallback_address:
                 task_manager_address = fallback_address

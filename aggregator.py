@@ -61,9 +61,9 @@ class Aggregator:
     def send_new_manager_instructions_verification_task(self, agent_prompt):
         task_type = 0  # Assuming VerifyManagerInstructions is the first enum value (index 0)
         tx = self.task_manager.functions.createNewTask(
-            task_type,  # 1. TaskType (Correct)
+            int(task_type),  # 1. TaskType (Correct and explicitly cast to int)
             agent_prompt, # 2. agentPrompt (CORRECT - now the second argument)
-            100, # 3. quorumThresholdPercentage (CORRECT - now the third argument)
+            int(100), # 3. quorumThresholdPercentage (CORRECT - now the third argument and explicitly cast to int)
             nums_to_bytes([0]),  # 4. quorumNumbers (CORRECT - now the fourth argument)
         ).build_transaction({
             "from": self.aggregator_address,

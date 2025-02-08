@@ -23,6 +23,10 @@ contract IncredibleSquaringTaskManager is
     using BN254 for BN254.G1Point;
 
     /* CONSTANT */
+    // Enum representing the type of task
+    enum TaskType {
+        VerifyManagerInstructions
+    }
     // The number of blocks from the task initialization within which the aggregator has to respond to
     uint32 public immutable TASK_RESPONSE_WINDOW_BLOCK;
     uint32 public constant TASK_CHALLENGE_WINDOW_BLOCK = 100;
@@ -33,6 +37,12 @@ contract IncredibleSquaringTaskManager is
     uint32 public latestTaskNum;
 
     // mapping of task indices to all tasks hashes
+    struct Task {
+        TaskType taskType;
+        string agentPrompt;
+        uint32 taskCreatedBlock;
+        bytes quorumNumbers;
+        uint32 quorumThresholdPercentage;
     // when a task is created, task hash is stored here,
     // and responses need to pass the actual task,
     // which is hashed onchain and checked against this mapping
@@ -81,13 +91,15 @@ contract IncredibleSquaringTaskManager is
     /* FUNCTIONS */
     // NOTE: this function creates new task, assigns it a taskId
     function createNewTask(
-        uint256 numberToBeSquared,
+        TaskType _taskType,
+        string memory agentPrompt,
         uint32 quorumThresholdPercentage,
         bytes calldata quorumNumbers
     ) external onlyTaskGenerator {
         // create a new task struct
         Task memory newTask;
-        newTask.numberToBeSquared = numberToBeSquared;
+        newTask.taskType = _taskType;
+        newTask.agentPrompt = agentPrompt;
         newTask.taskCreatedBlock = uint32(block.number);
         newTask.quorumThresholdPercentage = quorumThresholdPercentage;
         newTask.quorumNumbers = quorumNumbers;
@@ -180,7 +192,8 @@ contract IncredibleSquaringTaskManager is
         BN254.G1Point[] memory pubkeysOfNonSigningOperators
     ) external {
         uint32 referenceTaskIndex = taskResponse.referenceTaskIndex;
-        uint256 numberToBeSquared = task.numberToBeSquared;
+        // NOTE: numberToBeSquared is no longer relevant, but kept for now for compatibility with existing contract structure
+        uint256 numberToBeSquared = 0; // task.numberToBeSquared;
         // some logical checks
         require(
             allTaskResponses[referenceTaskIndex] != bytes32(0),
@@ -205,8 +218,9 @@ contract IncredibleSquaringTaskManager is
 
         // logic for checking whether challenge is valid or not
         uint256 actualSquaredOutput = numberToBeSquared * numberToBeSquared;
-        bool isResponseCorrect = (actualSquaredOutput ==
-            taskResponse.numberSquared);
+        // NOTE: replaced numberSquared with a dummy value since task is now prompt verification, not squaring
+        // bool isResponseCorrect = (actualSquaredOutput == taskResponse.numberSquared);
+        bool isResponseCorrect = (actualSquaredOutput == 0);
 
         // if response was correct, no slashing happens so we return
         if (isResponseCorrect == true) {

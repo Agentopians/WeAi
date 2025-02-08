@@ -3,9 +3,15 @@ pragma solidity ^0.8.9;
 
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
 
+
 interface INewsletterPromptTaskManager {
+    // ENUMS
+    enum TaskType {
+        VerifyManagerInstructions
+    }
+
     // EVENTS
-    event NewTaskCreated(uint32 indexed taskIndex, Task task);
+    event NewTaskCreated(uint32 indexed taskIndex, Task task); // NOTE: updated to emit the Task struct
 
     event TaskResponded(
         TaskResponse taskResponse,
@@ -26,9 +32,10 @@ interface INewsletterPromptTaskManager {
 
     // STRUCTS
     struct Task {
-        uint256 numberToBeSquared;
+        TaskType taskType; // NOTE: added taskType
+        string agentPrompt; // NOTE: added agentPrompt, replacing numberToBeSquared
         uint32 taskCreatedBlock;
-        // task submitter decides on the criteria for a task to be completed
+        // Task submitter decides on the criteria for a task to be completed
         // note that this does not mean the task was "correctly" answered (i.e. the number was squared correctly)
         //      this is for the challenge logic to verify
         // task is completed (and contract will accept its TaskResponse) when each quorumNumbers specified here
@@ -57,8 +64,10 @@ interface INewsletterPromptTaskManager {
 
     // FUNCTIONS
     // NOTE: this function creates new task.
+    // NOTE: updated function signature to accept TaskType and agentPrompt
     function createNewTask(
-        uint256 numberToBeSquared,
+        TaskType _taskType,
+        string calldata agentPrompt,
         uint32 quorumThresholdPercentage,
         bytes calldata quorumNumbers
     ) external;

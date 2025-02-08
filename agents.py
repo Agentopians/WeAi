@@ -30,6 +30,7 @@ import time # ADDED IMPORT
 import logging # ADDED IMPORT - for basic logging
 
 logging.basicConfig(level=logging.INFO) # ADDED BASIC LOGGING CONFIGURATION
+logger = logging.getLogger(__name__) # ADD THIS LINE: Initialize logger
 
 nest_asyncio.apply()
 load_dotenv()

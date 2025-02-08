@@ -11,7 +11,7 @@ import {BLSSignatureChecker, IRegistryCoordinator} from "@eigenlayer-middleware/
 import {OperatorStateRetriever} from "@eigenlayer-middleware/src/OperatorStateRetriever.sol";
 import "@eigenlayer-middleware/src/libraries/BN254.sol";
 import "./INewsletterPromptTaskManager.sol";
-import "forge-std/console.sol"; // ADDED IMPORT
+import { console } from "forge-std/console.sol"; // MODIFIED IMPORT
 
 contract NewsletterPromptTaskManager is
     Initializable,

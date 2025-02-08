@@ -52,7 +52,10 @@ class PromptOperator: # Class name is now PromptOperator
             fromBlock="latest"
         )
         while True:
-            for event in event_filter.get_new_entries():
+            logger.info("Polling for new task events...") # ADDED LOGGING
+            new_events = event_filter.get_new_entries()
+            logger.info(f"Number of new events received: {len(new_events)}") # ADDED LOGGING
+            for event in new_events:
                 logger.info(f"New task created: {event}")
                 self.process_task_event(event)
             time.sleep(3)
@@ -123,6 +126,7 @@ class PromptOperator: # Class name is now PromptOperator
     def __load_clients(self):
         cfg = BuildAllConfig(
             eth_http_url=self.config["eth_rpc_url"],
+            eth_ws_url=self.config["eth_ws_url"], # ADDED eth_ws_url HERE - important for event subscriptions!
             avs_name="incredible-squaring",
             registry_coordinator_addr=self.config["avs_registry_coordinator_address"],
             operator_state_retriever_addr=self.config["operator_state_retriever_address"],

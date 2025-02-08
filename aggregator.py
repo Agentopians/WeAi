@@ -41,8 +41,7 @@ class Aggregator:
         task_index = data['task_id']
         task_response = {
             'task_index': task_index,
-            'number_squared': data['number_squared'],
-            'number_to_be_squared': data['number_to_be_squared'],
+            'verification_status': data['verification_status'],
             'block_number': data['block_number']
         }
         print('data', data['operator_id'])
@@ -150,7 +149,7 @@ class Aggregator:
     def __load_clients(self):
         cfg = BuildAllConfig(
             eth_http_url=self.config["eth_rpc_url"],
-            avs_name="incredible-squaring",
+            avs_name="newsletter-prompt",
             registry_coordinator_addr=self.config["avs_registry_coordinator_address"],
             operator_state_retriever_addr=self.config["operator_state_retriever_address"],
             prom_metrics_ip_port_address="",
@@ -186,7 +185,7 @@ class Aggregator:
         )
         avs_registry_service = AvsRegistryService(self.clients.avs_registry_reader, operator_info_service, logger)
         def hasher(task):
-            encoded = eth_abi.encode(["uint32", "string"], [task["task_index"], task["number_squared"]])
+            encoded = eth_abi.encode(["uint32", "bool"], [task["task_index"], task["verification_status"]])
             return Web3.keccak(encoded)
         self.bls_aggregation_service = BlsAggregationService(avs_registry_service, hasher)
 

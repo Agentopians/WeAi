@@ -145,7 +145,7 @@ class PromptOperator: # Class name is now PromptOperator
         )
 
         task_manager_address = (
-            service_manager.functions.incredibleSquaringTaskManager().call()
+            service_manager.functions.newsletterPromptTaskManager().call()
         )
         with open("abis/NewsletterPromptTaskManager.json") as f:
             task_manager_abi = f.read()

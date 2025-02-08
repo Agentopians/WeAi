@@ -44,7 +44,7 @@ start-aggregator: ##
 	python aggregator.py
 
 start-operator: ## 
-	python squaring_operator.py
+	python prompt_operator.py
 
 start-operator-2: ## 
 	python squaring_operator-2.py

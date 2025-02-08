@@ -11,12 +11,12 @@ from eth_account import Account
 from eigensdk.chainio.clients.builder import BuildAllConfig, build_all
 from eigensdk.crypto.bls.attestation import KeyPair
 from eigensdk._types import Operator
-from routellm import inference
+from routellm import inference # This import is not used and can be removed
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class SquaringOperator:
+class PromptOperator: # Class name is now PromptOperator
     def __init__(self, config):
         self.config = config
         self.__load_bls_key()
@@ -27,7 +27,7 @@ class SquaringOperator:
             self.register()
         # operator id can only be loaded after registration
         self.__load_operator_id()
-        
+
     def register(self):
         operator = Operator(
             address=self.config["operator_address"],
@@ -59,29 +59,48 @@ class SquaringOperator:
 
     def process_task_event(self, event):
         task_id = event["args"]["taskIndex"]
-        number_to_be_squared = event["args"]["task"]["numberToBeSquared"]
-        #number_squared = number_to_be_squared ** 2
-        number_squared = inference("What is the meaning of life?");
-        encoded = eth_abi.encode(["uint32", "string"], [task_id, number_squared])
-        hash_bytes = Web3.keccak(encoded)
-        signature = self.bls_key_pair.sign_message(msg_bytes=hash_bytes).to_json()
-        logger.info(
-            f"Signature generated, task id: {task_id}, number squared: {number_squared}, signature: {signature}"
-        )
-        print('operator data id', self.operator_id.hex())
-        data = {
-            "task_id": task_id,
-            "number_to_be_squared": number_to_be_squared,
-            "number_squared": number_squared,
-            "signature": signature,
-            "block_number": event['blockNumber'],
-            "operator_id": "0x" + self.operator_id.hex(),
-        }
-        logger.info(f"Submitting result for task to aggregator {data}")
-        # prevent submitting task before initialize_new_task gets completed on aggregator
-        time.sleep(3)
-        url = f'http://{self.config["aggregator_server_ip_port_address"]}/signature'
-        requests.post(url, json=data)
+        task_type = event["args"]["task"]["taskType"] # Get task_type from event
+        agent_prompt = event["args"]["task"]["agentPrompt"] # Get agent prompt from event
+
+        if task_type == 0:  # Assuming VerifyManagerInstructions is enum index 0
+            logger.info(f"New Manager Instructions Verification Task created: Task Index {task_id}")
+            logger.info(f"Agent Prompt to Review:\\n{agent_prompt}")
+
+            # --- Automated Policy Checks ---
+            is_valid_length = len(agent_prompt) <= 200 # Example: Max length 200 characters
+            required_keywords = ["ethereum", "defi", "l2"]
+            has_required_keywords = any(keyword in agent_prompt.lower() for keyword in required_keywords)
+
+            policy_length_satisfied = is_valid_length
+            policy_keyword_satisfied = has_required_keywords
+
+            verification_status = policy_length_satisfied and policy_keyword_satisfied # Approve only if ALL policies pass
+
+            logger.info(f"Policy Check Results:")
+            logger.info(f"  Length Policy Satisfied: {policy_length_satisfied}")
+            logger.info(f"  Keyword Policy Satisfied: {policy_keyword_satisfied}")
+            logger.info(f"  Overall Verification Status: {'Approved' if verification_status else 'Rejected'}")
+
+            encoded = eth_abi.encode(["uint32", "bool"], [task_id, verification_status]) # Encode task_id and verification_status
+            hash_bytes = Web3.keccak(encoded)
+            signature = self.bls_key_pair.sign_message(msg_bytes=hash_bytes).to_json()
+            logger.info(f"Operator Verdict: {'Approved' if verification_status else 'Rejected'}, Task ID: {task_id}, Signature: {signature}")
+
+            data = { # Data to send to aggregator
+                "task_id": task_id,
+                "verification_status": verification_status, # Send boolean verification status
+                "signature": signature,
+                "block_number": event['blockNumber'],
+                "operator_id": "0x" + self.operator_id.hex(),
+            }
+            logger.info(f"Submitting Operator Verdict for Task {task_id} to aggregator: {data}")
+            # prevent submitting task before initialize_new_task gets completed on aggregator
+            time.sleep(3)
+            url = f'http://{self.config["aggregator_server_ip_port_address"]}/signature'
+            requests.post(url, json=data)
+        else: # Handle other task types if you add more later - for now, just log unknown task type
+            logger.warning(f"Unknown Task Type ({task_type}) received for Task Index {task_id}. Ignoring.")
+
 
     def __load_bls_key(self):
         bls_key_password = os.environ.get("OPERATOR_BLS_KEY_PASSWORD", "")
@@ -137,6 +156,4 @@ if __name__ == "__main__":
     with open("config-files/operator.anvil.yaml", "r") as f:
         config = yaml.load(f, Loader=yaml.BaseLoader)
 
-    SquaringOperator(config=config).start()
-
-    
+    PromptOperator(config=config).start() # Class name is now PromptOperator

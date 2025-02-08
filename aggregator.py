@@ -67,7 +67,7 @@ class Aggregator:
             nums_to_bytes([0]),  # 4. quorumNumbers (CORRECT - now the fourth argument)
         ).build_transaction({
             "from": self.aggregator_address,
-            "gas": 2000000,
+            "gas": 4000000,
             "gasPrice": self.web3.to_wei("20", "gwei"),
             "nonce": self.web3.eth.get_transaction_count(
                 self.aggregator_address

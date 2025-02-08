@@ -18,7 +18,7 @@ contract IncredibleSquaringTaskManager is
     Pausable,
     BLSSignatureChecker,
     OperatorStateRetriever,
-    IINewsletterPromptTaskManager
+    INewsletterPromptTaskManager
 {
     using BN254 for BN254.G1Point;
 

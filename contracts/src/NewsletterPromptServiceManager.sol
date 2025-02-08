@@ -12,7 +12,7 @@ import "@eigenlayer-middleware/src/ServiceManagerBase.sol";
 contract IncredibleSquaringServiceManager is ServiceManagerBase {
     using BytesLib for bytes;
 
-    IINewsletterPromptTaskManager
+    INewsletterPromptTaskManager
         public immutable incredibleSquaringTaskManager;
 
     /// @notice when applied to a function, ensures that the function is only callable by the `registryCoordinator`.
@@ -28,7 +28,7 @@ contract IncredibleSquaringServiceManager is ServiceManagerBase {
         IAVSDirectory _avsDirectory,
         IRegistryCoordinator _registryCoordinator,
         IStakeRegistry _stakeRegistry,
-        IINewsletterPromptTaskManager _incredibleSquaringTaskManager
+        INewsletterPromptTaskManager _incredibleSquaringTaskManager
     )
         ServiceManagerBase(
             _avsDirectory,

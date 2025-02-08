@@ -61,6 +61,7 @@ class PromptOperator: # Class name is now PromptOperator
             time.sleep(3)
 
     def process_task_event(self, event):
+        logger.info("Entering process_task_event function") # ADDED LOGGING - CHECK IF THIS APPEARS
         task_id = event["args"]["taskIndex"]
         task_type = event["args"]["task"]["taskType"] # Get task_type from event
         agent_prompt = event["args"]["task"]["agentPrompt"] # Get agent prompt from event
@@ -98,8 +99,7 @@ class PromptOperator: # Class name is now PromptOperator
             }
             logger.info(f"Submitting Operator Verdict for Task {task_id} to aggregator: {data}")
             # prevent submitting task before initialize_new_task gets completed on aggregator
-            time.sleep(3)
-            url = f'http://{self.config["aggregator_server_ip_port_address"]}/signature'
+            time.sleep(3)\n            url = f'http://{self.config["aggregator_server_ip_port_address"]}/signature'
             requests.post(url, json=data)
         else: # Handle other task types if you add more later - for now, just log unknown task type
             logger.warning(f"Unknown Task Type ({task_type}) received for Task Index {task_id}. Ignoring.")

@@ -203,7 +203,7 @@ class Aggregator:
 
     def __load_task_manager(self):
         service_manager_address = self.clients.avs_registry_writer.service_manager_addr
-        with open("abis/IncredibleSquaringServiceManager.json") as f:
+        with open("abis/NewsletterPromptServiceManager.json") as f:
             service_manager_abi = f.read()
         service_manager = self.web3.eth.contract(
             address=service_manager_address, abi=service_manager_abi
@@ -212,7 +212,7 @@ class Aggregator:
         task_manager_address = (
             service_manager.functions.incredibleSquaringTaskManager().call()
         )
-        with open("abis/IncredibleSquaringTaskManager.json") as f:
+        with open("abis/NewsletterPromptTaskManager.json") as f:
             task_manager_abi = f.read()
         self.task_manager = self.web3.eth.contract(address=task_manager_address, abi=task_manager_abi)
 

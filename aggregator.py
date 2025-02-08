@@ -1,4 +1,4 @@
-// aggregator.py
+# aggregator.py
 import os
 import logging
 import json
@@ -100,46 +100,6 @@ class Aggregator:
         )
         return task_index
 
-    # def start_sending_new_tasks(self): # Commented out for Phase 2 - Step 2.3
-    #     i = 0
-    #     while True:
-    #         logger.info('Sending new task')
-    #         task_index = self.send_new_task(i)
-    #         time.sleep(10)
-    #         i += 1
-
-    # def send_new_task(self, i): # Commented out for Phase 2 - Step 2.3
-    #     tx = self.task_manager.functions.createNewTask(
-    #         i, 100, nums_to_bytes([0])
-    #     ).build_transaction({
-    #         "from": self.aggregator_address,
-    #         "gas": 2000000,
-    #         "gasPrice": self.web3.to_wei("20", "gwei"),
-    #         "nonce": self.web3.eth.get_transaction_count(
-    #             self.aggregator_address
-    #         ),
-    #         "chainId": self.web3.eth.chain_id,
-    #     })
-    #     signed_tx = self.web3.eth.account.sign_transaction(
-    #         tx, private_key=self.aggregator_ecdsa_private_key
-    #     )
-    #     tx_hash = self.web3.eth.send_raw_transaction(
-    #         signed_tx.raw_transaction
-    #     )
-    #     receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
-    #     event = self.task_manager.events.NewTaskCreated().process_log(receipt['logs'][0])
-    #
-    #     task_index = event['args']['taskIndex']
-    #     logger.info(f"Successfully sent the new task {task_index}")
-    #     self.bls_aggregation_service.initialize_new_task(
-    #         task_index=task_index,
-    #         task_created_block=receipt['blockNumber'],
-    #         quorum_numbers=nums_to_bytes([0]),
-    #         quorum_threshold_percentages=[100],
-    #         time_to_expiry=60000
-    #     )
-    #     return event['args']['taskIndex']
-
     def start_submitting_signatures(self):
         while True:
             logger.info('Waiting for response')
@@ -186,7 +146,6 @@ class Aggregator:
             )
             receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
 
-
     def __load_ecdsa_key(self):
         ecdsa_key_password = os.environ.get("AGGREGATOR_ECDSA_KEY_PASSWORD", "")
         if not ecdsa_key_password:
@@ -215,7 +174,6 @@ class Aggregator:
             address=service_manager_address, abi=service_manager_abi
         )
 
-        # UPDATED FUNCTION CALL: use newsletterPromptTaskManager() instead of incredibleSquaringTaskManager()
         task_manager_address = (
             service_manager.functions.newsletterPromptTaskManager().call()
         )
@@ -245,5 +203,4 @@ if __name__ == '__main__':
         config = yaml.load(f, Loader=yaml.BaseLoader)
     aggregator = Aggregator(config)
     threading.Thread(target=aggregator.start_submitting_signatures, args=[]).start()
-    # threading.Thread(target=aggregator.start_sending_new_tasks, args=[]).start() # Commented out for Phase 2 - Step 2.3
     aggregator.start_server()

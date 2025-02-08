@@ -112,7 +112,7 @@ def create_group_chat(manager_instructions): # MODIFIED - Accept manager_instruc
         system_message="""You write and execute Python code:
         1. Always make sure you manage to run the code
         2. Show your work and results""",
-        code_execution_config={\"work_dir\": \"coding\", \"use_docker\": False},
+        code_execution_config={"work_dir": "coding", "use_docker": False}, # REWRITTEN LINE - Step 4.4
         default_auto_reply="",
         max_consecutive_auto_reply=10,
         is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
@@ -211,42 +211,4 @@ def interact_freely_with_user(mode="society"): # MODIFIED - Step 4.4
             # For this PoC, we'll just wait and assume operators will respond in time.
             time.sleep(5) # Check every 5 seconds
             # In a more advanced PoC, you would query the contract's events or state
-            # to determine the verification outcome and aggregated signature.
-            # For now, we'll just assume it's verified if we reach this point after waiting.
-            verification_status = True # Assume verified after waiting (for basic PoC)
-            break
-
-        if verification_status:
-            print(colored("\\nManager Instructions VERIFIED by AVS! Proceeding with agent initialization...", "green"))
-            # Now create your SocietyOfMindAgent, passing in the *verified* manager_instructions:
-            agent = create_society_of_mind_agent(manager_instructions=manager_instructions) # Modify create_society_of_mind_agent to accept manager_instructions
-            user = UserProxyAgent(
-                name="user_proxy",
-                human_input_mode="ALWAYS",
-                code_execution_config=False,
-                default_auto_reply="",
-                is_termination_msg=lambda x: True,
-            )
-            initial_message = "Hello! I'm a Society of Mind agent operating under AVS Verified Instructions. What would you like to explore?"
-            agent.initiate_chat(user, message=initial_message)
-
-        else:
-            print(colored("\\nManager Instructions REJECTED by AVS! Aborting agent initialization.", "red"))
-            return # Or handle rejection appropriately
-
-
-if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(description='AutoGen Chat Interface')
-    parser.add_argument(
-        '--mode',
-        type=str,
-        choices=['society'],
-        default='society',
-        help='Mode of operation: society'
-    )
-
-    args = parser.parse_args()
-
-    interact_freely_with_user(mode=args.mode)
+            # to determine the verification outcome and aggregated signature

@@ -4,7 +4,7 @@ pragma solidity ^0.8.12;
 import "../src/NewsletterPromptServiceManager.sol" as newsletterPromptServiceManager;
 import {NewsletterPromptTaskManager} from "../src/NewsletterPromptTaskManager.sol";
 import {BLSMockAVSDeployer} from "@eigenlayer-middleware/test/utils/BLSMockAVSDeployer.sol";
-import "../src/INewsletterPromptTaskManager.sol";
+import "../src/INewsletterPromptTaskManager.sol"; // IMPORT INewsletterPromptTaskManager.sol
 import {TransparentUpgradeableProxy} from "@openzeppelin/contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 
 contract CredibleSquaringTaskManagerTest is BLSMockAVSDeployer {
@@ -23,7 +23,7 @@ contract CredibleSquaringTaskManagerTest is BLSMockAVSDeployer {
         _setUpBLSMockAVSDeployer();
 
         tmImplementation = new NewsletterPromptTaskManager(
-            newsletterPromptServiceManager.IServiceManager(address(registryCoordinator)),
+            registryCoordinator, // Use registryCoordinator directly
             TASK_RESPONSE_WINDOW_BLOCK
         );
 
@@ -48,7 +48,7 @@ contract CredibleSquaringTaskManagerTest is BLSMockAVSDeployer {
     function testCreateNewTask() public {
         bytes memory quorumNumbers = new bytes(0);
         cheats.prank(generator, generator);
-        tm.createNewTask(INewsletterPromptTaskManager.TaskType.VerifyManagerInstructions, "test prompt", 100, quorumNumbers);
+        tm.createNewTask(INewsletterPromptTaskManager.TaskType.VerifyManagerInstructions, "test prompt", 100, quorumNumbers); // Use INewsletterPromptTaskManager.TaskType
         assertEq(tm.latestTaskNum(), 1);
     }
 }

@@ -68,20 +68,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for more detailed information a
 
 ### Installation
 
-**Please refer to the detailed installation instructions in [docs/README_AVS.md](docs/README_AVS.md).**
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/week-in-ethereum-news-ai.git
-cd week-in-ethereum-news-ai
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys and configuration in the `.env` file.
-```
+**Please refer to the detailed [installation instructions](docs/README_AVS.md).**
 
 ### Running the Application (Proof of Concept)
 

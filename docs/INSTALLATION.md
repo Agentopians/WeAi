@@ -1,8 +1,6 @@
-# Incredible Squaring AVS in Python
+# Installation Instructions
 
 <b> Do not use it in Production, testnet only. </b>
-
-A Python implementation of the EigenLayer [Incredible Squaring AVS](https://github.com/Layr-Labs/incredible-squaring-avs) 
 
 ## Dependencies
 

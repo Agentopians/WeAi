@@ -52,7 +52,7 @@ Start anvil in a separate terminal:
 make start-anvil-chain-with-el-and-avs-deployed
 ```
 
-The above command starts a local anvil chain from a [saved state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) with eigenlayer and incredible-squaring contracts already deployed (but no operator registered).
+The above command starts a local anvil chain from a [saved state](./tests/anvil/avs-and-eigenlayer-deployed-anvil-state.json) with eigenlayer and contracts already deployed (but no operator registered).
 
 Start the aggregator in a separate terminal:
 

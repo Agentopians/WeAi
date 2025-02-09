@@ -2,31 +2,15 @@
 
 This document illustrates the architecture of the Week in Ethereum News AI Edition system, now focusing on the **Verifiable Agent Prompts** implementation using EigenLayer AVS and Agentic Operators.
 
+**Mermaid Diagram of Workflow:**
+
 ```mermaid
 graph LR
-    A[Newsletter Creator] --> B{Define Agent Prompt & Policies}
-    B --> C[Submit Prompt & Policies to AVS]
-    C --> D{NewsletterPromptTaskManager Contract}
-    D --> E{Verification Task Created}
-    E --> F[Agentic Operators]
-    F --> G{Verification Agents (in Operators)}
-    G --> H{Automated Policy Check}
-    H --> I{Generate Verdict (Pass/Fail)}
-    I --> J[Submit Verdict & Signature to Aggregator]
-    F --> J
-    J --> K{Aggregator}
-    K --> L{Aggregate Verdicts}
-    K --> D
-    L --> M{AVS Contract Records Outcome}
-    D --> M
-    M --> N{Check Verification Outcome in agents.py}
-    N -- Verified --> O[Autogen Newsletter Agent]
-    N -- Rejected --> P[Halt Newsletter Generation & Notify Creator]
-
-    style D fill:#f9f,stroke:#333,stroke-width:2px
-    style E fill:#f0f,stroke:#333,stroke-width:2px
-    style K fill:#ccf,stroke:#333,stroke-width:2px
-    style N fill:#ccf,stroke:#ccf,stroke-width:2px
+    A[Creator] --> B[Prompt]
+    B --> C[AVS Contract]
+    C --> D[Operators]
+    D --> E[Agent]
+    E --> F[Newsletter]
 ```
 
 ## Component Descriptions

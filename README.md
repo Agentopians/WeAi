@@ -37,23 +37,11 @@ Our system uses a multi-agent architecture based on Autogen, orchestrated within
 
 ```mermaid
 graph LR
-    A[Creator] --> B{Prompt & Policies}
-    B --> C[AVS]
-    C --> D{Contract}
-    D --> E{Task}
-    E --> F[Operators]
-    F --> G{Agents}
-    G --> H{Policy Check}
-    H --> I{Verdict}
-    I --> J[Aggregator]
-    F --> J
-    J --> K{Aggregate}
-    K --> D
-    K --> L{Outcome}
-    D --> L
-    L --> M{Check Outcome}
-    M -- Verified --> N[Newsletter Agent]
-    M -- Rejected --> P[Halt]
+    A[Creator] --> B[Prompt]
+    B --> C[AVS Contract]
+    C --> D[Operators]
+    D --> E[Agent]
+    E --> F[Newsletter]
 ```
 
 **Agent Roles:**
@@ -79,6 +67,8 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for more detailed information a
 - Access to required APIs (OpenAI API key, Telegram Bot Token, Twitter API keys - details in `.env.example`)
 
 ### Installation
+
+**Please refer to the detailed installation instructions in [docs/README_AVS.md](docs/README_AVS.md).**
 
 ```bash
 # Clone the repository

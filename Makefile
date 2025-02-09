@@ -23,10 +23,10 @@ build-contracts: ## builds all contracts
 deploy-eigenlayer-contracts-to-anvil-and-save-state: ## Deploy eigenlayer
 	./tests/anvil/deploy-eigenlayer-save-anvil-state.sh
 
-deploy-incredible-squaring-contracts-to-anvil-and-save-state: ## Deploy avs
+deploy-newsletter-prompt-contracts-to-anvil-and-save-state: ## Deploy avs
 	./tests/anvil/deploy-avs-save-anvil-state.sh
 
-deploy-all-to-anvil-and-save-state: deploy-eigenlayer-contracts-to-anvil-and-save-state deploy-incredible-squaring-contracts-to-anvil-and-save-state ## deploy eigenlayer, shared avs contracts, and inc-sq contracts 
+deploy-all-to-anvil-and-save-state: deploy-eigenlayer-contracts-to-anvil-and-save-state deploy-newsletter-prompt-contracts-to-anvil-and-save-state ## deploy eigenlayer, shared avs contracts, and newsletter prompt contracts 
 
 start-anvil-chain-with-el-and-avs-deployed: ## starts anvil from a saved state file (with el and avs contracts deployed)
 	./tests/anvil/start-anvil-chain-with-el-and-avs-deployed.sh
@@ -44,7 +44,7 @@ start-aggregator: ##
 	python aggregator.py
 
 start-operator: ## 
-	python squaring_operator.py
+	python prompt_operator.py
 
 start-operator-2: ## 
 	python squaring_operator-2.py

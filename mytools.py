@@ -13,7 +13,7 @@ from sentence_transformers import SentenceTransformer
 from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
 from autogen.retrieve_utils import TEXT_FORMATS
 import requests
-import pandas as pd 
+import pandas as pd
 from typing import Dict, Any
 from dotenv import load_dotenv
 from scrapegraphai.graphs import SmartScraperGraph
@@ -62,7 +62,7 @@ config_list = [
 llm_config = {
     "config_list": config_list,
     "cache_seed": None,
-    "timeout": 600 
+    "timeout": 600
 }
 
 def save_config():
@@ -78,7 +78,7 @@ class TelegramPostAgent(ConversableAgent):
         1. Maintain brand voice
         2. Follow engagement best practices
         3. Return posting results"""
-        
+
         super().__init__(name=name, system_message=system_message or default_system_message, llm_config=llm_config, **kwargs)
 
         # Register the post_message function
@@ -90,7 +90,7 @@ class TelegramPostAgent(ConversableAgent):
             description="Posts content to a Telegram group and returns the result"
         )
 
-    def post_message(self, content: str, reply_to_message_id: int = None) -> dict:
+    def post_message(self, content: str, reply_to_message_id: Optional[int] = None) -> dict:
         """Posts a message to the Telegram group (optionally replies to another message)."""
         result = {"success": False, "content": None, "error": None}
 
@@ -105,7 +105,7 @@ class TelegramPostAgent(ConversableAgent):
 
             # API URL for sending messages
             url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-            
+
             # Prepare the payload
             payload = {
                 "chat_id": chat_id,
@@ -140,13 +140,13 @@ class TwitterPostAgent(ConversableAgent):
         1. Maintain brand voice
         2. Follow engagement best practices
         3. Return posting results"""
-        
+
         super().__init__(
             name=name,
             system_message=system_message or default_system_message,
             **kwargs
         )
-        
+
         # Initialize Twitter client
         try:
             self.twitter_client = tweepy.Client(
@@ -160,7 +160,7 @@ class TwitterPostAgent(ConversableAgent):
         except Exception as e:
             print(f"Twitter auth failed: {e}")
             self.twitter_client = None
-            
+
         # Register the post_tweet function
         register_function(
             self.post_tweet,
@@ -169,7 +169,7 @@ class TwitterPostAgent(ConversableAgent):
             name="post_tweet",
             description="Posts content to Twitter and returns the result"
         )
-    
+
     def post_tweet(self, content: str) -> dict:
         """Posts a tweet and returns the result with proper error handling"""
         result = {
@@ -177,28 +177,28 @@ class TwitterPostAgent(ConversableAgent):
             "content": None,
             "error": None
         }
-        
+
         try:
             if not self.twitter_client:
                 raise ValueError("Twitter client not initialized")
-                
+
             # Clean and truncate content
             text = content.strip()
             if len(text) > 280:
                 text = text[:277] + "..."
-                
+
             # Post tweet
             response = self.twitter_client.create_tweet(text=text)
-            
+
             if hasattr(response, 'data'):
                 result["success"] = True
                 result["content"] = text
             else:
                 result["error"] = "No response data from Twitter"
-                
+
         except Exception as e:
             result["error"] = str(e)
-            
+
         return result
 
 class WebScraperAgent(ConversableAgent):
@@ -214,7 +214,7 @@ class WebScraperAgent(ConversableAgent):
             llm_config=llm_config,
             **kwargs
         )
-        
+
         register_function(
             self.web_scraper,
             caller=self,
@@ -222,7 +222,7 @@ class WebScraperAgent(ConversableAgent):
             name="web_scraper",
             description="A tool that scrapes web content using AI to extract specific information based on prompts"
         )
-    
+
     def web_scraper(self, prompt: str, url: str) -> dict:
         """Scrapes web content with improved error handling"""
         results = {
@@ -232,7 +232,7 @@ class WebScraperAgent(ConversableAgent):
             "errors": [],
             "url": url
         }
-        
+
         try:
             scraper = SmartScraperGraph(
                 prompt=prompt,
@@ -240,16 +240,16 @@ class WebScraperAgent(ConversableAgent):
                 config={"llm": {"api_key": openai_api_key, "model": "openai/gpt-4o-mini"}}
             )
             result = scraper.run()
-            
+
             if result:
                 results["success"] = True
                 results["data"].append(result)
             else:
                 results["errors"].append("No data returned from scraper")
-                
+
         except Exception as e:
             print(f"Scraping error for {url}: {str(e)}")
             results["errors"].append(str(e))
-            
+
         results["partial_success"] = bool(results["data"])
         return results

@@ -32,7 +32,7 @@ import "forge-std/console.sol";
 
 // # To deploy and verify our contract
 // forge script script/CredibleSquaringDeployer.s.sol:CredibleSquaringDeployer --rpc-url $RPC_URL  --private-key $PRIVATE_KEY --broadcast -vvvv
-contract IncredibleSquaringDeployer is Script, Utils {
+contract NewsletterPromptDeployer is Script, Utils {
     // DEPLOYMENT CONSTANTS
     uint256 public constant QUORUM_THRESHOLD_PERCENTAGE = 100;
     uint32 public constant TASK_RESPONSE_WINDOW_BLOCK = 30;
@@ -49,8 +49,8 @@ contract IncredibleSquaringDeployer is Script, Utils {
     StrategyBaseTVLLimits public erc20MockStrategy;
 
     // Credible Squaring contracts
-    ProxyAdmin public incredibleSquaringProxyAdmin;
-    PauserRegistry public incredibleSquaringPauserReg;
+    ProxyAdmin public newsletterPromptProxyAdmin;
+    PauserRegistry public newsletterPromptPauserReg;
 
     regcoord.RegistryCoordinator public registryCoordinator;
     regcoord.IRegistryCoordinator public registryCoordinatorImplementation;
@@ -67,7 +67,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
     OperatorStateRetriever public operatorStateRetriever;
 
     NewsletterPromptServiceManager public newsletterPromptServiceManager;
-    IServiceManager public incredibleSquaringServiceManagerImplementation;
+    IServiceManager public newsletterPromptServiceManagerImplementation;
 
     NewsletterPromptTaskManager public newsletterPromptTaskManager;
     INewsletterPromptTaskManager
@@ -115,8 +115,8 @@ contract IncredibleSquaringDeployer is Script, Utils {
                 )
             );
 
-        address credibleSquaringCommunityMultisig = msg.sender;
-        address credibleSquaringPauser = msg.sender;
+        address newsletterPromptCommunityMultisig = msg.sender;
+        address newsletterPromptPauser = msg.sender;
 
         vm.startBroadcast();
         _deployErc20AndStrategyAndWhitelistStrategy(
@@ -125,12 +125,12 @@ contract IncredibleSquaringDeployer is Script, Utils {
             baseStrategyImplementation,
             strategyManager
         );
-        _deployCredibleSquaringContracts(
+        _deployNewsletterPromptContracts(
             delegationManager,
             avsDirectory,
             erc20MockStrategy,
-            credibleSquaringCommunityMultisig,
-            credibleSquaringPauser
+            newsletterPromptCommunityMultisig,
+            newsletterPromptPauser
         );
         vm.stopBroadcast();
     }
@@ -169,12 +169,12 @@ contract IncredibleSquaringDeployer is Script, Utils {
         );
     }
 
-    function _deployCredibleSquaringContracts(
+    function _deployNewsletterPromptContracts(
         IDelegationManager delegationManager,
         IAVSDirectory avsDirectory,
         IStrategy strat,
-        address incredibleSquaringCommunityMultisig,
-        address credibleSquaringPauser
+        address newsletterPromptCommunityMultisig,
+        address newsletterPromptPauser
     ) internal {
         // Adding this as a temporary fix to make the rest of the script work with a single strategy
         // since it was originally written to work with an array of strategies
@@ -182,16 +182,16 @@ contract IncredibleSquaringDeployer is Script, Utils {
         uint numStrategies = deployedStrategyArray.length;
 
         // deploy proxy admin for ability to upgrade proxy contracts
-        incredibleSquaringProxyAdmin = new ProxyAdmin();
+        newsletterPromptProxyAdmin = new ProxyAdmin();
 
         // deploy pauser registry
         {
             address[] memory pausers = new address[](2);
-            pausers[0] = credibleSquaringPauser;
-            pausers[1] = incredibleSquaringCommunityMultisig;
-            incredibleSquaringPauserReg = new PauserRegistry(
+            pausers[0] = newsletterPromptPauser;
+            pausers[1] = newsletterPromptCommunityMultisig;
+            newsletterPromptPauserReg = new PauserRegistry(
                 pausers,
-                incredibleSquaringCommunityMultisig
+                newsletterPromptCommunityMultisig
             );
         }
 
@@ -207,7 +207,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
-                    address(incredibleSquaringProxyAdmin),
+                    address(newsletterPromptProxyAdmin),
                     ""
                 )
             )
@@ -216,7 +216,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
-                    address(incredibleSquaringProxyAdmin),
+                    address(newsletterPromptProxyAdmin),
                     ""
                 )
             )
@@ -225,7 +225,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
-                    address(incredibleSquaringProxyAdmin),
+                    address(newsletterPromptProxyAdmin),
                     ""
                 )
             )
@@ -234,7 +234,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
-                    address(incredibleSquaringProxyAdmin),
+                    address(newsletterPromptProxyAdmin),
                     ""
                 )
             )
@@ -243,7 +243,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
-                    address(incredibleSquaringProxyAdmin),
+                    address(newsletterPromptProxyAdmin),
                     ""
                 )
             )
@@ -252,7 +252,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
             address(
                 new TransparentUpgradeableProxy(
                     address(emptyContract),
-                    address(incredibleSquaringProxyAdmin),
+                    address(newsletterPromptProxyAdmin),
                     ""
                 )
             )
@@ -267,7 +267,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
                 delegationManager
             );
 
-            incredibleSquaringProxyAdmin.upgrade(
+            newsletterPromptProxyAdmin.upgrade(
                 TransparentUpgradeableProxy(payable(address(stakeRegistry))),
                 address(stakeRegistryImplementation)
             );
@@ -276,7 +276,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
                 registryCoordinator
             );
 
-            incredibleSquaringProxyAdmin.upgrade(
+            newsletterPromptProxyAdmin.upgrade(
                 TransparentUpgradeableProxy(payable(address(blsApkRegistry))),
                 address(blsApkRegistryImplementation)
             );
@@ -285,7 +285,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
                 registryCoordinator
             );
 
-            incredibleSquaringProxyAdmin.upgrade(
+            newsletterPromptProxyAdmin.upgrade(
                 TransparentUpgradeableProxy(payable(address(indexRegistry))),
                 address(indexRegistryImplementation)
             );
@@ -338,7 +338,7 @@ contract IncredibleSquaringDeployer is Script, Utils {
                         });
                 }
             }
-            incredibleSquaringProxyAdmin.upgradeAndCall(
+            newsletterPromptProxyAdmin.upgradeAndCall(
                 TransparentUpgradeableProxy(
                     payable(address(registryCoordinator))
                 ),
@@ -346,10 +346,10 @@ contract IncredibleSquaringDeployer is Script, Utils {
                 abi.encodeWithSelector(
                     regcoord.RegistryCoordinator.initialize.selector,
                     // we set churnApprover and ejector to communityMultisig because we don't need them
-                    incredibleSquaringCommunityMultisig,
-                    incredibleSquaringCommunityMultisig,
-                    incredibleSquaringCommunityMultisig,
-                    incredibleSquaringPauserReg,
+                    newsletterPromptCommunityMultisig,
+                    newsletterPromptCommunityMultisig,
+                    newsletterPromptCommunityMultisig,
+                    newsletterPromptPauserReg,
                     0, // 0 initialPausedStatus means everything unpaused
                     quorumsOperatorSetParams,
                     quorumsMinimumStake,
@@ -358,18 +358,18 @@ contract IncredibleSquaringDeployer is Script, Utils {
             );
         }
 
-        incredibleSquaringServiceManagerImplementation = new NewsletterPromptServiceManager(
+        newsletterPromptServiceManagerImplementation = new NewsletterPromptServiceManager(
             avsDirectory,
             registryCoordinator,
             stakeRegistry,
             newsletterPromptTaskManager
         );
         // Third, upgrade the proxy contracts to use the correct implementation contracts and initialize them.
-        incredibleSquaringProxyAdmin.upgrade(
+        newsletterPromptProxyAdmin.upgrade(
             TransparentUpgradeableProxy(
                 payable(address(newsletterPromptServiceManager))
             ),
-            address(incredibleSquaringServiceManagerImplementation)
+            address(newsletterPromptServiceManagerImplementation)
         );
 
         newsletterPromptTaskManagerImplementation = new NewsletterPromptTaskManager(
@@ -378,15 +378,15 @@ contract IncredibleSquaringDeployer is Script, Utils {
         );
 
         // Third, upgrade the proxy contracts to use the correct implementation contracts and initialize them.
-        incredibleSquaringProxyAdmin.upgradeAndCall(
+        newsletterPromptProxyAdmin.upgradeAndCall(
             TransparentUpgradeableProxy(
                 payable(address(newsletterPromptTaskManager))
             ),
             address(newsletterPromptTaskManagerImplementation),
             abi.encodeWithSelector(
                 newsletterPromptTaskManager.initialize.selector,
-                incredibleSquaringPauserReg,
-                incredibleSquaringCommunityMultisig,
+                newsletterPromptPauserReg,
+                newsletterPromptCommunityMultisig,
                 AGGREGATOR_ADDR,
                 TASK_GENERATOR_ADDR
             )
@@ -413,8 +413,8 @@ contract IncredibleSquaringDeployer is Script, Utils {
         );
         vm.serializeAddress(
             deployed_addresses,
-            "credibleSquaringServiceManagerImplementation",
-            address(incredibleSquaringServiceManagerImplementation)
+            "newsletterPromptServiceManagerImplementation",
+            address(newsletterPromptServiceManagerImplementation)
         );
         vm.serializeAddress(
             deployed_addresses,

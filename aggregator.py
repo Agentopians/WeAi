@@ -1,3 +1,4 @@
+# aggregator.py
 import os
 import logging
 import json
@@ -17,8 +18,6 @@ from eigensdk.services.operatorsinfo.operatorsinfo_inmemory import OperatorsInfo
 from eigensdk.services.bls_aggregation.blsagg import BlsAggregationService, BlsAggregationServiceResponse
 from eigensdk.chainio.utils import nums_to_bytes
 from eigensdk.crypto.bls.attestation import Signature, G1Point, G2Point, g1_to_tupple, g2_to_tupple
-
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -42,8 +41,7 @@ class Aggregator:
         task_index = data['task_id']
         task_response = {
             'task_index': task_index,
-            'number_squared': data['number_squared'],
-            'number_to_be_squared': data['number_to_be_squared'],
+            'verification_status': data['verification_status'],
             'block_number': data['block_number']
         }
         print('data', data['operator_id'])
@@ -60,29 +58,34 @@ class Aggregator:
         host, port = self.config['aggregator_server_ip_port_address'].split(':')
         self.app.run(host=host, port=port)
 
-    def send_new_task(self, i):
+    def send_new_manager_instructions_verification_task(self, agent_prompt):
+        task_type = 0  # Assuming VerifyManagerInstructions is the first enum value (index 0)
         tx = self.task_manager.functions.createNewTask(
-            i, 100, nums_to_bytes([0])
+            int(task_type),  # 1. TaskType (explicitly cast to int)
+            agent_prompt,    # 2. agentPrompt
+            int(100),        # 3. quorumThresholdPercentage (explicitly cast to int)
+            nums_to_bytes([0])  # 4. quorumNumbers
         ).build_transaction({
             "from": self.aggregator_address,
-            "gas": 2000000,
+            "gas": 4000000,
             "gasPrice": self.web3.to_wei("20", "gwei"),
-            "nonce": self.web3.eth.get_transaction_count(
-                self.aggregator_address
-            ),
+            "nonce": self.web3.eth.get_transaction_count(self.aggregator_address),
             "chainId": self.web3.eth.chain_id,
         })
         signed_tx = self.web3.eth.account.sign_transaction(
             tx, private_key=self.aggregator_ecdsa_private_key
         )
-        tx_hash = self.web3.eth.send_raw_transaction(
-            signed_tx.raw_transaction
-        )
+        tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
         receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
-        event = self.task_manager.events.NewTaskCreated().process_log(receipt['logs'][0])
 
-        task_index = event['args']['taskIndex']
-        logger.info(f"Successfully sent the new task {task_index}")
+        if not receipt['logs']:  # if logs are empty
+            logger.warning("No logs emitted in transaction receipt. Falling back to inferring task index.")
+            task_index = self.task_manager.functions.latestTaskNum().call()  # Fallback: Infer task index
+        else:
+            event = self.task_manager.events.NewTaskCreated().process_log(receipt['logs'][0])
+            task_index = event['args']['taskIndex']
+
+        logger.info(f"Successfully sent Manager Instructions Verification Task {task_index}")
         self.bls_aggregation_service.initialize_new_task(
             task_index=task_index,
             task_created_block=receipt['blockNumber'],
@@ -90,15 +93,7 @@ class Aggregator:
             quorum_threshold_percentages=[100],
             time_to_expiry=60000
         )
-        return event['args']['taskIndex']
-
-    def start_sending_new_tasks(self):
-        i = 0
-        while True:
-            logger.info('Sending new task')
-            task_index = self.send_new_task(i)
-            time.sleep(10)
-            i += 1
+        return task_index
 
     def start_submitting_signatures(self):
         while True:
@@ -133,25 +128,19 @@ class Aggregator:
                 "from": self.aggregator_address,
                 "gas": 2000000,
                 "gasPrice": self.web3.to_wei("20", "gwei"),
-                "nonce": self.web3.eth.get_transaction_count(
-                    self.aggregator_address
-                ),
+                "nonce": self.web3.eth.get_transaction_count(self.aggregator_address),
                 "chainId": self.web3.eth.chain_id,
             })
             signed_tx = self.web3.eth.account.sign_transaction(
                 tx, private_key=self.aggregator_ecdsa_private_key
             )
-            tx_hash = self.web3.eth.send_raw_transaction(
-                signed_tx.raw_transaction
-            )
+            tx_hash = self.web3.eth.send_raw_transaction(signed_tx.raw_transaction)
             receipt = self.web3.eth.wait_for_transaction_receipt(tx_hash)
-            
 
     def __load_ecdsa_key(self):
         ecdsa_key_password = os.environ.get("AGGREGATOR_ECDSA_KEY_PASSWORD", "")
         if not ecdsa_key_password:
             logger.warning("AGGREGATOR_ECDSA_KEY_PASSWORD not set. using empty string.")
-
         with open(self.config["ecdsa_private_key_store_path"], "r") as f:
             keystore = json.load(f)
         self.aggregator_ecdsa_private_key = Account.decrypt(keystore, ecdsa_key_password).hex()
@@ -160,7 +149,7 @@ class Aggregator:
     def __load_clients(self):
         cfg = BuildAllConfig(
             eth_http_url=self.config["eth_rpc_url"],
-            avs_name="incredible-squaring",
+            avs_name="newsletter-prompt",
             registry_coordinator_addr=self.config["avs_registry_coordinator_address"],
             operator_state_retriever_addr=self.config["operator_state_retriever_address"],
             prom_metrics_ip_port_address="",
@@ -169,16 +158,21 @@ class Aggregator:
 
     def __load_task_manager(self):
         service_manager_address = self.clients.avs_registry_writer.service_manager_addr
-        with open("abis/IncredibleSquaringServiceManager.json") as f:
+        with open("abis/NewsletterPromptServiceManager.json") as f:
             service_manager_abi = f.read()
-        service_manager = self.web3.eth.contract(
-            address=service_manager_address, abi=service_manager_abi
-        )
-
-        task_manager_address = (
-            service_manager.functions.incredibleSquaringTaskManager().call()
-        )
-        with open("abis/IncredibleSquaringTaskManager.json") as f:
+        service_manager = self.web3.eth.contract(address=service_manager_address, abi=service_manager_abi)
+        try:
+            task_manager_address = service_manager.functions.newsletterPromptTaskManager().call()
+            logger.info(f"Task manager address obtained from service manager: {task_manager_address}")
+        except Exception as e:
+            logger.warning(f"Failed to call newsletterPromptTaskManager(): {e}")
+            fallback_address = self.config.get("newsletter_prompt_task_manager_address")
+            if fallback_address:
+                task_manager_address = fallback_address
+                logger.info(f"Using fallback task manager address from config: {task_manager_address}")
+            else:
+                raise e
+        with open("abis/NewsletterPromptTaskManager.json") as f:
             task_manager_abi = f.read()
         self.task_manager = self.web3.eth.contract(address=task_manager_address, abi=task_manager_abi)
 
@@ -189,14 +183,10 @@ class Aggregator:
             start_block_socket=0,
             logger=logger,
         )
-
-        avs_registry_service = AvsRegistryService(
-            self.clients.avs_registry_reader, operator_info_service, logger
-        )
+        avs_registry_service = AvsRegistryService(self.clients.avs_registry_reader, operator_info_service, logger)
         def hasher(task):
-            encoded = eth_abi.encode(["uint32", "string"], [task["task_index"], task["number_squared"]])
-            return Web3.keccak(encoded) 
-        
+            encoded = eth_abi.encode(["uint32", "bool"], [task["task_index"], task["verification_status"]])
+            return Web3.keccak(encoded)
         self.bls_aggregation_service = BlsAggregationService(avs_registry_service, hasher)
 
 if __name__ == '__main__':
@@ -204,5 +194,4 @@ if __name__ == '__main__':
         config = yaml.load(f, Loader=yaml.BaseLoader)
     aggregator = Aggregator(config)
     threading.Thread(target=aggregator.start_submitting_signatures, args=[]).start()
-    threading.Thread(target=aggregator.start_sending_new_tasks, args=[]).start()
     aggregator.start_server()

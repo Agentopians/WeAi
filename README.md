@@ -19,7 +19,6 @@ Week in Ethereum News AI Edition is a project developed during the ETH Global Ag
 
 ## Architecture
 
-<<<<<<< HEAD
 Our system uses a multi-agent architecture based on Autogen, orchestrated within a Society of Mind pattern.  A key innovation is the integration of an EigenLayer Autonomous Verifiable Service (AVS) to implement Verifiable Agent Prompts.
 
 **Mermaid Diagram of Workflow:**
@@ -45,9 +44,6 @@ graph LR
 - **Verification Agents (within Operators):** Specialized AI agents deployed by operators. They automatically check if a given Agent Prompt adheres to predefined **Verification Policies** (e.g., topic relevance, tone, length).
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for more detailed information about each agent's role and responsibilities (to be updated).
-=======
-Our system uses a multi-agent architecture where specialized AI agents handle different aspects of the newsletter production pipeline. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed information about each agent's role and responsibilities.
->>>>>>> parent of 1dd81ca (feat: Implement verifiable agent prompts and update readme)
 
 ## Getting Started
 
@@ -59,22 +55,7 @@ Our system uses a multi-agent architecture where specialized AI agents handle di
 
 ### Installation
 
-<<<<<<< HEAD
 **Please refer to the detailed [installation instructions](docs/README_AVS.md).**
-=======
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/week-in-ethereum-news-ai.git
-cd week-in-ethereum-news-ai
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys and configuration
-```
->>>>>>> parent of 1dd81ca (feat: Implement verifiable agent prompts and update readme)
 
 ## Documentation
 

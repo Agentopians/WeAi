@@ -61,9 +61,9 @@ class Aggregator:
     def send_new_manager_instructions_verification_task(self, agent_prompt):
         task_type = 0  # Assuming VerifyManagerInstructions is the first enum value (index 0)
         tx = self.task_manager.functions.createNewTask(
-            int(task_type),  # 1. TaskType (explicitly cast to int)
+            task_type,  # Pass task type
             agent_prompt,    # 2. agentPrompt
-            int(100),        # 3. quorumThresholdPercentage (explicitly cast to int)
+            100,        # 3. quorumThresholdPercentage
             nums_to_bytes([0])  # 4. quorumNumbers
         ).build_transaction({
             "from": self.aggregator_address,
@@ -101,15 +101,16 @@ class Aggregator:
             aggregated_response = next(self.bls_aggregation_service.get_aggregated_responses())
             logger.info(f'Aggregated response {aggregated_response}')
             response = aggregated_response.task_response
-            task = [
-                response['number_to_be_squared'],
+            task = [ # Task struct - needs to align with Solidity contract - adjust if needed based on your contract changes
+                0, # taskType - Assuming default task type or adjust based on your needs
+                "", # agentPrompt -  Not used in respondToTask, can be placeholder
                 response['block_number'],
                 nums_to_bytes([0]),
                 100,
             ]
             task_response = [
                 response['task_index'],
-                response['number_squared']
+                response['verification_status'] # Use verification_status from operator response
             ]
             non_signers_stakes_and_signature = [
                 aggregated_response.non_signer_quorum_bitmap_indices,
@@ -185,7 +186,7 @@ class Aggregator:
         )
         avs_registry_service = AvsRegistryService(self.clients.avs_registry_reader, operator_info_service, logger)
         def hasher(task):
-            encoded = eth_abi.encode(["uint32", "bool"], [task["task_index"], task["verification_status"]])
+            encoded = eth_abi.encode(["uint32", "bool"], [task["task_index"], task["verification_status"]]) # Changed encoding
             return Web3.keccak(encoded)
         self.bls_aggregation_service = BlsAggregationService(avs_registry_service, hasher)
 

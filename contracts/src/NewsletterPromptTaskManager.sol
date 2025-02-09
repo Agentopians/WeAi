@@ -87,7 +87,10 @@
          string memory agentPrompt,
          uint32 quorumThresholdPercentage,
          bytes calldata quorumNumbers
-     ) external onlyTaskGenerator {
+     ) external onlyTaskGenerator whenNotPaused(PAUSE_ALL) {
+         require(quorumThresholdPercentage <= 100, "quorumThresholdPercentage must be <= 100");
+         require(quorumNumbers.length <= type(uint96).max / 8, "quorumNumbers too long");
+
          // create a new task struct
          INewsletterPromptTaskManager.Task memory newTask;
          newTask.taskType = _taskType;
@@ -107,7 +110,7 @@
          Task calldata task,
          TaskResponse calldata taskResponse,
          NonSignerStakesAndSignature memory nonSignerStakesAndSignature
-     ) external onlyAggregator {
+     ) external onlyAggregator whenNotPaused(PAUSE_ALL) {
          uint32 taskCreatedBlock = task.taskCreatedBlock;
          bytes calldata quorumNumbers = task.quorumNumbers;
          uint32 quorumThresholdPercentage = task.quorumThresholdPercentage;
@@ -182,7 +185,7 @@
          TaskResponse calldata taskResponse,
          TaskResponseMetadata calldata taskResponseMetadata,
          BN254.G1Point[] memory pubkeysOfNonSigningOperators
-     ) external {
+     ) external whenNotPaused(PAUSE_ALL) {
          uint32 referenceTaskIndex = taskResponse.referenceTaskIndex;
          // NOTE: numberToBeSquared is no longer relevant, but kept for now for compatibility with existing contract structure
          uint256 numberToBeSquared = 0; // task.numberToBeSquared;

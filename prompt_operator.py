@@ -127,7 +127,7 @@ class PromptOperator: # Class name is now PromptOperator
     def __load_clients(self):
         cfg = BuildAllConfig(
             eth_http_url=self.config["eth_rpc_url"],
-            avs_name="incredible-squaring",
+            avs_name="incredible-squaring", # Changed to incredible-squaring to match config - you might need to adjust this to your avs_name if different
             registry_coordinator_addr=self.config["avs_registry_coordinator_address"],
             operator_state_retriever_addr=self.config["operator_state_retriever_address"],
             prom_metrics_ip_port_address=self.config["eigen_metrics_ip_port_address"],

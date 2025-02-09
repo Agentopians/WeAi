@@ -37,28 +37,23 @@ Our system uses a multi-agent architecture based on Autogen, orchestrated within
 
 ```mermaid
 graph LR
-    A[Newsletter Creator] --> B{Define Agent Prompt & Policies}
-    B --> C[Submit Prompt & Policies to AVS]
-    C --> D{AVS Contract}
-    D --> E{Verification Task Created}
-    E --> F[Agentic Operators]
-    F --> G{Verification Agents (in Operators)}
-    G --> H{Automated Policy Check}
-    H --> I{Generate Verdict (Pass/Fail)}
-    I --> J[Submit Verdict & Signature to Aggregator]
+    A[Creator] --> B{Prompt & Policies}
+    B --> C[AVS]
+    C --> D{Contract}
+    D --> E{Task}
+    E --> F[Operators]
+    F --> G{Agents}
+    G --> H{Policy Check}
+    H --> I{Verdict}
+    I --> J[Aggregator]
     F --> J
-    J --> K{Aggregator}
-    K --> L{Aggregate Verdicts}
+    J --> K{Aggregate}
     K --> D
-    L --> M{AVS Contract Records Outcome}
-    D --> M
-    M --> N{Check Verification Outcome}
-    N -- Verified --> O[Autogen Newsletter Agent]
-    N -- Rejected --> P[Halt Newsletter Generation & Notify Creator]
-    style N fill:#ccf,stroke:#99f,stroke-width:2px
-    style E fill:#ccf,stroke:#99f,stroke-width:2px
-    style D fill:#ccf,stroke:#99f,stroke-width:2px
-    style K fill:#ccf,stroke:#99f,stroke-width:2px
+    K --> L{Outcome}
+    D --> L
+    L --> M{Check Outcome}
+    M -- Verified --> N[Newsletter Agent]
+    M -- Rejected --> P[Halt]
 ```
 
 **Agent Roles:**

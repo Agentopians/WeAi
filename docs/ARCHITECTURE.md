@@ -1,86 +1,97 @@
-# Agent Architecture
+# Agent Architecture: Verifiable Agent Prompts
 
-This diagram illustrates the architecture of the Week in Ethereum News AI Edition system, incorporating the AI-Agentic Journalism Workflow and the Two-Token Model.
+This document illustrates the architecture of the Week in Ethereum News AI Edition system, now focusing on the **Verifiable Agent Prompts** implementation using EigenLayer AVS and Agentic Operators.
 
 ```mermaid
-graph TD
-    A[Top-1000 X accounts in Ethereum ecosystem] --> B[News Extractor Agent]
-    B --> C[News Verifier Agent]
-    C --> D[AVS]
-    C -- 4 --> E[Editorial Agent]
-    D -- 3 --> C
-    E <-- 5 --> F[Archives]
-    E --> G[Publisher Agent]
-    G -- Post on WaiE X account or Share in WaiE Website --> H[WaiE Platform]
+graph LR
+    A[Newsletter Creator] --> B{Define Agent Prompt & Policies}
+    B --> C[Submit Prompt & Policies to AVS]
+    C --> D{NewsletterPromptTaskManager Contract}
+    D --> E{Verification Task Created}
+    E --> F[Agentic Operators]
+    F --> G{Verification Agents (in Operators)}
+    G --> H{Automated Policy Check}
+    H --> I{Generate Verdict (Pass/Fail)}
+    I --> J[Submit Verdict & Signature to Aggregator]
+    F --> J
+    J --> K{Aggregator}
+    K --> L{Aggregate Verdicts}
+    K --> D
+    L --> M{AVS Contract Records Outcome}
+    D --> M
+    M --> N{Check Verification Outcome in agents.py}
+    N -- Verified --> O[Autogen Newsletter Agent]
+    N -- Rejected --> P[Halt Newsletter Generation & Notify Creator]
 
     style D fill:#f9f,stroke:#333,stroke-width:2px
     style E fill:#f0f,stroke:#333,stroke-width:2px
-    style G fill:#ccf,stroke:#333,stroke-width:2px
-
-    subgraph "Tee Enviroment"
-    B
-    C
-    D
-    E
-    F
-    end
+    style K fill:#ccf,stroke:#333,stroke-width:2px
+    style N fill:#ccf,stroke:#ccf,stroke-width:2px
 ```
 
-## Agent Descriptions
+## Component Descriptions
 
-### Content Pipeline Agents
+### Verifiable Agent Prompt Workflow Components
 
-- **News Extractor Agent**: **Report Submission & Draft Generation**: Monitors and collects Ethereum news from "Top-1000 X accounts in Ethereum ecosystem".  This agent extracts relevant information from these sources, acting as the initial point of contact for news gathering.
-- **News Verifier Agent**: **Verification Process**:  This agent is responsible for verifying the information extracted by the News Extractor Agent.  It leverages **EigenLayer Actively Validated Services (AVSs)** to perform verifiable checks on the news, enhancing the trustworthiness of the curated content.  Verification techniques may include source credibility analysis and fact-checking. This agent operates within a **Trusted Execution Environment (TEE)** to ensure secure and reliable verification processes.
-- **AVS (EigenLayer Actively Validated Service)**:  An **Autonomous Verifiable Service** on EigenLayer that provides verifiable services for the News Verifier Agent.  AVS offers an additional layer of trust and transparency to the news verification process. The project is exploring the concept of **"Level 1 Agents"** as a standardized way for agents to interact with AVSs, aiming for a more verifiable and transparent news curation process.
-
-### Editorial and Publishing Agents
-
-- **Editorial Agent**: **Editorial Review**:  This agent performs the editorial review of the verified news. It receives feedback from the News Verifier Agent and can consult "Archives" for context.  The Editorial Agent makes decisions on content revisions and finalization, ensuring adherence to editorial standards.  It operates within the **Trusted Execution Environment (TEE)**.
-- **Publisher Agent**: **Publication**:  Responsible for publishing the finalized news.  This agent distributes the content to the "WaiE X account" (e.g., on X/Twitter) and/or the "WaiE Website", making the curated news accessible to the audience.
+- **Newsletter Creator:** The entity or individual responsible for defining the Agent Prompt and Verification Policies for each newsletter issue. This is the starting point of the verifiable workflow.
+- **Agent Prompt & Policies:**  The set of instructions (prompt) that guides the Autogen Newsletter Agent, along with the predefined Verification Policies that the prompt must adhere to.
+- **AVS (NewsletterPromptTaskManager Contract):** The Solidity smart contract deployed as an EigenLayer Autonomous Verifiable Service (AVS). In this architecture, it is specifically the `NewsletterPromptTaskManager` contract. It is responsible for:
+    - Receiving and storing Agent Prompts and Verification Policies.
+    - Creating Verification Tasks.
+    - Recording verification outcomes provided by the Aggregator.
+    - Enforcing access control and pausing/unpausing functionalities.
+- **Verification Task Created:** Represents the on-chain event indicating that a new prompt verification task has been created in the AVS contract, triggered by the Newsletter Creator submitting a prompt.
+- **Agentic Operators:**  Represent a decentralized network of entities participating in the EigenLayer AVS. In our Proof of Concept, these are simulated by running `prompt_operator.py`.  Each Operator is responsible for deploying and running a Verification Agent.
+- **Verification Agents (in Operators):** Specialized AI agents deployed and run by Agentic Operators. These agents are responsible for:
+    - Receiving Prompt Verification Tasks.
+    - Automatically checking if the submitted Agent Prompt adheres to the predefined Verification Policies.
+    - Generating a Verdict (\"Pass\" or \"Fail\") based on the policy checks.
+    - Cryptographically signing the Verdict using the Operator's BLS key.
+- **Automated Policy Check:**  The process performed by Verification Agents to automatically evaluate the Agent Prompt against the defined Verification Policies. This involves techniques like keyword analysis, length checks, and potentially more advanced NLP-based policy evaluations.
+- **Generate Verdict (Pass/Fail):** The outcome of the Automated Policy Check, indicating whether the Agent Prompt is deemed valid (\"Pass\") or invalid (\"Fail\") according to the Verification Policies.
+- **Submit Verdict & Signature to Aggregator:** Each Verification Agent submits its generated Verdict (Pass/Fail) and its cryptographic signature to the Aggregator component.
+- **Aggregator:** The off-chain component (`aggregator.py`) responsible for:
+    - Receiving signed Verdicts from Agentic Operators.
+    - Aggregating the Verdicts and signatures.
+    - Determining the overall Verification Outcome based on the aggregated verdicts (e.g., majority vote).
+    - Submitting the aggregated Verification Outcome to the AVS contract.
+- **Aggregate Verdicts:** The process within the Aggregator of combining individual operator verdicts to determine a final, collective verification outcome.
+- **AVS Contract Records Outcome:** The AVS contract (`NewsletterPromptTaskManager`) stores the final Verification Outcome (Verified/Rejected) on-chain, providing a permanent and auditable record.
+- **Check Verification Outcome in `agents.py`:** The `agents.py` script (our main Autogen workflow) queries the AVS contract to check the recorded Verification Outcome for the submitted Agent Prompt.
+- **Autogen Newsletter Agent:** The main AI agent (Society of Mind agent in `agents.py`) responsible for generating the Ethereum newsletter content.  It is **conditionally executed** only if the Agent Prompt has been verifiably approved by the AVS.
+- **Halt Newsletter Generation & Notify Creator:** If the Verification Outcome is \"Rejected\", the newsletter generation process is halted, and the Newsletter Creator is notified, preventing the generation of content based on an unverified or rejected prompt.
 
 ## Data Flow
 
-This section outlines the flow of information between agents, as depicted in the architecture diagram:
+This section outlines the flow of information and control within the Verifiable Agent Prompt architecture:
 
-1.  **Data Source**: The process begins with data from "Top-1000 X accounts in Ethereum ecosystem", which serves as the primary source of news and information.
-2.  **News Extraction**: The **News Extractor Agent** (1) extracts relevant news and information from the data source.
-3.  **News Verification**: The extracted information is passed to the **News Verifier Agent** (2), which utilizes **AVS (EigenLayer Actively Validated Service)** (3) to perform verifiable checks.
-4.  **Feedback Loop**: A feedback loop (4) exists between the **News Verifier Agent** and the **Editorial Agent**. If the verification process requires further editorial review or input, the News Verifier Agent communicates with the Editorial Agent.
-5.  **Archives Consultation**: The **Editorial Agent** (5) can consult "Archives" for historical context and information relevant to the news being reviewed.
-6.  **Publication**: Once the editorial review is complete, the **Editorial Agent** sends the finalized news to the **Publisher Agent** (6), which publishes the content on the "WaiE X account" or "WaiE Website".
+1.  **Prompt and Policy Definition:** The Newsletter Creator defines the Agent Prompt and associated Verification Policies.
+2.  **Prompt Submission to AVS:** The Newsletter Creator submits the Agent Prompt and Policies to the `NewsletterPromptTaskManager` contract.
+3.  **Verification Task Creation:** The AVS contract emits an event indicating a new Verification Task has been created.
+4.  **Task Distribution to Agentic Operators:** Agentic Operators, monitoring the AVS contract for new tasks, receive the Verification Task details (Agent Prompt and Policies).
+5.  **Automated Policy Check by Verification Agents:** Each Agentic Operator's Verification Agent automatically analyzes the Agent Prompt against the Verification Policies.
+6.  **Verdict Generation and Signing:** Each Verification Agent generates a Verdict (Pass/Fail) and cryptographically signs it.
+7.  **Verdict Submission to Aggregator:** Verification Agents submit their signed Verdicts to the Aggregator.
+8.  **Verdict Aggregation and Outcome Determination:** The Aggregator aggregates the Verdicts and determines the overall Verification Outcome (Verified/Rejected).
+9.  **Outcome Recording on AVS Contract:** The Aggregator submits the aggregated Verification Outcome to the `NewsletterPromptTaskManager` contract, which records it on-chain.
+10. **Outcome Check in `agents.py`:** The `agents.py` script queries the AVS contract to retrieve the Verification Outcome.
+11. **Conditional Agent Execution:**
+    - If the Outcome is **Verified**: The `agents.py` script proceeds to execute the Autogen Newsletter Agent, using the verifiably approved Agent Prompt to guide content generation.
+    - If the Outcome is **Rejected**: The `agents.py` script halts the newsletter generation process and notifies the Newsletter Creator.
+12. **Newsletter Generation and Distribution (if Verified):** If the prompt is verified, the Autogen Newsletter Agent generates the newsletter content, which is then distributed through the intended channels (e.g., Telegram, email).
 
-## AI-Agentic Journalism Workflow
+## Agent Roles (in the Autogen Workflow - Newsletter Generation)
 
-This section outlines the workflow of content creation, inspired by the AI-Agentic Journalism model:
+- **Manager Agent:**  The primary AI agent orchestrating the newsletter creation process.  Its behavior is now guided by **Verifiably Approved Agent Prompts**, ensuring its instructions have been reviewed and validated by the Agentic Operator network.
+- **Critic Agent:** Reviews plans and results generated by the Manager Agent, ensuring quality, completeness, and alignment with the newsletter's objectives.
+- **Web Scraper Agent:** Gathers relevant information from the web based on instructions from the Manager Agent, focusing on reliable sources and structured data extraction.
+- **Coder Agent:** (Currently placeholder/under development) Intended for future use in data analysis, code execution, and potentially code-assisted content generation.
+- **Telegram Poster Agent:** Automates the distribution of the generated newsletter content to a Telegram channel.
+- **Twitter Poster Agent:** (Currently commented out/future feature) Intended for automated posting to Twitter (X) in future iterations.
 
-1.  **Report Submission (News Extractor Agent)**: The News Extractor Agent continuously monitors news sources ("Top-1000 X accounts in Ethereum ecosystem") and identifies relevant information, acting as the initial point of "report" submission.
-2.  **Verification Process (News Verifier Agent, AVS)**: The News Verifier Agent takes the extracted information and initiates the verification process, leveraging EigenLayer AVS for verifiable checks.
-3.  **Editorial Review (Editorial Agent)**: The Editorial Agent reviews the verified news, incorporating feedback and consulting archives as needed. It makes editorial decisions to finalize the content.
-4.  **Publication (Publisher Agent)**: Once the content is finalized, the Publisher Agent publishes the news through the designated channels ("WaiE X account" and "WaiE Website").
+## Operator Roles (in the AVS - Prompt Verification)
 
-This workflow provides a structured approach to news curation, emphasizing verifiability and editorial oversight.
+- **Agentic Operators:** Entities participating in the EigenLayer AVS, responsible for providing the verifiable prompt review service. In our Proof of Concept, these are simulated by running `prompt_operator.py`.
+- **Verification Agents (within Operators):** Specialized AI agents deployed by Agentic Operators. These agents automatically perform the **Automated Policy Check**, evaluating Agent Prompts against predefined **Verification Policies** and generating **Verdicts**.
 
-## Tokenomics
-
-The "Week in Ethereum News AI Edition" project employs a **two-token model** to create a sustainable ecosystem and incentivize participation in news curation and platform governance.  The model utilizes two tokens: **$EDIT** and **ETH**.
-
-- **$EDIT (Editorial Coin)**: This is the platform's utility and governance token.  $EDIT is used to:
-    - **Reward Content Contributors**:  Reporters and Verifiers are rewarded with $EDIT for their contributions to news curation and verification.
-    - **Enable Governance**: $EDIT holders gain governance rights, allowing them to participate in decision-making processes for the platform's future direction.
-    - **Future Platform Utility**: $EDIT may unlock additional features and functionalities within the platform in the future.
-
-- **ETH (Restaking & Economic Security Layer)**:  ETH plays a crucial role in the economic model by:
-    - **Providing Economic Security**: ETH is used as a restaking layer, contributing to the platform's economic security and stability.
-    - **Facilitating $EDIT Swapping**: $EDIT holders can swap their $EDIT tokens for ETH, creating a link between the platform's utility token and a well-established cryptocurrency.
-    - **Job Posting Payments**: While job postings are priced in USD, payments from sponsors are processed in ETH or stablecoins, providing a revenue stream for the platform.
-
-The two-token model is designed to create a balanced and self-sustaining ecosystem where $EDIT incentivizes contributions and governance, while ETH provides economic security and a bridge to the broader cryptocurrency market.  For a detailed breakdown of the tokenomics model, please refer to the [FEATURES.md](FEATURES.md) document.
-
-## Verifiability Considerations and Future Directions
-
-The "Week in Ethereum News AI Edition" project is strongly committed to building a trustworthy and transparent news platform.  Inspired by the 'Level 1 Agent' concept and EigenLayer's Autonomous Verifiable Services (AVSs) architecture, this architecture is designed with verifiability at its core.
-
-The **News Verifier Agent** utilizes **EigenLayer AVS** to provide cryptographic assurance of the integrity and unbiased nature of our news curation process.  By integrating with AVS, the system aims to enhance the transparency and trustworthiness of the AI agents' verification process.  The agents operate within a **Trusted Execution Environment (TEE)**, further strengthening the security and reliability of the system.
-
-Future directions include deeper exploration of EigenLayer AVS capabilities, investigating verifiable data sources, and continuously improving the verifiability and transparency of the AI-driven news curation process.  The project aims to be at the forefront of verifiable AI journalism, providing users with confidence in the integrity of the information presented.
+This architecture provides a robust framework for building a trustworthy and transparent AI-driven newsletter, leveraging EigenLayer AVS to ensure verifiable control over the AI content generation process through Verifiable Agent Prompts and Agentic Operators.

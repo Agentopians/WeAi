@@ -35,6 +35,8 @@ logger = logging.getLogger(__name__) # ADD THIS LINE: Initialize logger
 nest_asyncio.apply()
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
+#api_key_name = os.getenv("CDP_API_key_NAME")
+#api_key_private_key = os.getenv("CDP_key_PRIVATE_KEY")
 
 config_list = [
     {

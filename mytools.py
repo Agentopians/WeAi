@@ -35,12 +35,15 @@ from twikit import Client
 import os
 import requests
 from autogen import ConversableAgent, register_function
+from cdp import *
+from typing import Dict, Optional
 
 nest_asyncio.apply()
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
-
+api_key_name = os.getenv("CDP_API_key_NAME")
+api_key_private_key = os.getenv("CDP_key_PRIVATE_KEY")
 TWITTER_API_KEY=os.getenv("TWITTER_API_KEY")
 TWITTER_API_SECRET_KEY=os.getenv("TWITTER_API_SECRET_KEY")
 TWITTER_ACCESS_TOKEN=os.getenv("TWITTER_ACCESS_TOKEN")
@@ -253,3 +256,66 @@ class WebScraperAgent(ConversableAgent):
 
         results["partial_success"] = bool(results["data"])
         return results
+
+class CdpWalletAgent(ConversableAgent):
+    def __init__(self, name="cdp_wallet_agent", system_message=None, llm_config=None, **kwargs):
+        default_system_message = """I am a CDP wallet agent that can:
+        1. Create new wallets
+        2. Fund existing wallets"""
+        
+        super().__init__(
+            name=name, 
+            system_message=system_message or default_system_message, 
+            llm_config=llm_config, 
+            **kwargs
+        )
+
+        # Register the wallet functions
+        register_function(
+            self.create_wallet,
+            caller=self,
+            executor=self,
+            name="create_wallet",
+            description="Creates a new CDP wallet"
+        )
+
+        register_function(
+            self.fund_wallet,
+            caller=self,
+            executor=self,
+            name="fund_wallet",
+            description="Funds an existing CDP wallet using faucet"
+        )
+
+    def create_wallet(self) -> Dict:
+        """Creates a new CDP wallet."""
+        result = {"success": False, "wallet": None, "error": None}
+        
+        try:
+            # Create new wallet
+            wallet = Cdp.create_wallet()
+            result["success"] = True
+            result["wallet"] = wallet
+            
+        except Exception as e:
+            result["error"] = str(e)
+            
+        return result
+
+    def fund_wallet(self, wallet) -> Dict:
+        """Funds a CDP wallet using faucet transaction."""
+        result = {"success": False, "transaction": None, "error": None}
+        
+        try:
+            # Initiate faucet transaction
+            faucet_tx = wallet.faucet()
+            # Wait for transaction completion
+            faucet_tx.wait()
+            
+            result["success"] = True
+            result["transaction"] = faucet_tx
+            
+        except Exception as e:
+            result["error"] = str(e)
+            
+        return result

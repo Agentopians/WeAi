@@ -75,5 +75,5 @@ make start-operator
 Finally, in another terminal, run the agents script:
 
 ```bash
-python3 agents.py
+python agents.py
 ```

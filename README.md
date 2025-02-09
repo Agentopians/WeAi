@@ -3,11 +3,12 @@
 [![ETH Global Hackathon](https://img.shields.io/badge/ETH%20Global-Hackathon-blue)](https://ethglobal.com)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+> Continuing the legacy of Week in Ethereum News through AI innovation
+
 <p align="center">
-  <img src="docs/weai169.jpg" alt="Week in Ethereum News AI Edition Logo" width="300">
+  <img src="docs/weai169.jpg" alt="Week in Ethereum News AI Edition Logo" width="900">
 </p>
 
-> Continuing the legacy of Week in Ethereum News through AI innovation
 
 ## About
 

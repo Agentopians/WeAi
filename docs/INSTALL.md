@@ -71,3 +71,9 @@ Register the operator with eigenlayer and incredible-squaring, and then start th
 ```bash
 make start-operator
 ```
+
+Finally, in another terminal, run the agents script:
+
+```bash
+python3 agents.py
+```
